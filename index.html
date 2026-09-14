@@ -1,172 +1,157 @@
-<!DOCTYPE html>
-
-<html>
+<!doctype html>
+<html lang="zh-Hant">
 <head>
-
-<meta charset="UTF-8">
-
-<title>
-AI Agent 團隊管理中心
-</title>
-
-
-<style>
-
-body {
-
-font-family: Arial, sans-serif;
-
-background:#f5f5f5;
-
-padding:30px;
-
-}
-
-
-h1 {
-
-text-align:center;
-
-}
-
-
-
-.agent {
-
-background:white;
-
-width:250px;
-
-padding:20px;
-
-margin:20px;
-
-border-radius:15px;
-
-box-shadow:0 3px 10px #cccccc;
-
-}
-
-
-.status {
-
-font-size:20px;
-font-weight:bold;
-}
-
-
-
-</style>
-
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="以 GitHub Pages 運作的個人 AI Agent 團隊管理平台">
+  <title>個人 AI Agent 作業系統</title>
+  <style>
+    :root {
+      --bg:#07111f; --panel:#0d1a2c; --panel-2:#12223a; --line:#243753;
+      --text:#edf5ff; --muted:#8fa5bf; --brand:#7c6cff; --brand-2:#34d3b4;
+      --green:#37d67a; --yellow:#f4c95d; --blue:#58a6ff; --gray:#7f91a8;
+      --shadow:0 18px 45px rgba(0,0,0,.22); --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:radial-gradient(circle at 70% 0,#15294a 0,transparent 34%),var(--bg);color:var(--text);font-family:"Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;min-height:100vh}
+    button,input{font:inherit}
+    button,a{-webkit-tap-highlight-color:transparent}
+    .app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+    aside{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);padding:26px 18px;background:rgba(7,17,31,.82);backdrop-filter:blur(18px);z-index:10}
+    .brand{display:flex;align-items:center;gap:12px;padding:0 8px 26px}
+    .brand-mark{width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(135deg,var(--brand),#4db0ff);box-shadow:0 8px 25px rgba(124,108,255,.38);font-size:22px}
+    .brand strong{display:block}.brand small{color:var(--muted)}
+    nav{display:grid;gap:7px}
+    .nav-button{border:0;background:transparent;color:var(--muted);padding:12px 13px;border-radius:12px;text-align:left;cursor:pointer;display:flex;gap:11px;align-items:center}
+    .nav-button:hover,.nav-button.active{background:var(--panel-2);color:var(--text)}
+    .nav-button.active{box-shadow:inset 3px 0 var(--brand)}
+    .side-note{position:absolute;bottom:22px;left:18px;right:18px;border:1px solid var(--line);background:var(--panel);padding:14px;border-radius:14px;color:var(--muted);font-size:12px;line-height:1.65}
+    main{padding:30px 34px 60px;min-width:0}
+    header{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:25px}
+    h1{font-size:clamp(24px,3vw,36px);margin:0 0 7px;letter-spacing:-.03em}
+    .subtitle{color:var(--muted);margin:0}
+    .header-actions{display:flex;gap:10px;align-items:center}
+    .search{background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--text);padding:11px 14px;width:220px;outline:none}
+    .search:focus{border-color:var(--brand)}
+    .button{border:1px solid var(--line);background:var(--panel-2);color:var(--text);padding:11px 15px;border-radius:12px;text-decoration:none;cursor:pointer}
+    .button:hover{border-color:var(--brand)}
+    .summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
+    .metric{padding:18px;border:1px solid var(--line);background:linear-gradient(145deg,rgba(18,34,58,.96),rgba(10,24,42,.96));border-radius:var(--radius);box-shadow:var(--shadow)}
+    .metric-label{color:var(--muted);font-size:13px}.metric-value{font-size:28px;font-weight:800;margin:6px 0}.metric-detail{font-size:12px;color:var(--brand-2)}
+    .view{display:none}.view.active{display:block}
+    .section-head{display:flex;justify-content:space-between;align-items:end;margin:24px 0 13px}
+    .section-head h2{margin:0;font-size:18px}.section-head span{color:var(--muted);font-size:12px}
+    .canvas{position:relative;min-height:610px;border:1px solid var(--line);border-radius:22px;overflow:hidden;background-color:#091627;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:28px 28px;box-shadow:var(--shadow)}
+    #連線圖層{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+    #代理節點區{position:absolute;inset:0}
+    .agent-node{position:absolute;width:230px;min-height:156px;background:rgba(16,32,54,.96);border:1px solid var(--line);border-radius:17px;padding:15px;box-shadow:0 14px 35px rgba(0,0,0,.3);cursor:grab;user-select:none;touch-action:none;transition:border-color .2s,transform .2s}
+    .agent-node:hover{border-color:var(--brand);transform:translateY(-2px)}
+    .agent-node.dragging{cursor:grabbing;z-index:5;transform:none}
+    .agent-top{display:flex;justify-content:space-between;gap:8px;align-items:center}.agent-icon{width:37px;height:37px;border-radius:11px;background:#1b2c49;display:grid;place-items:center}
+    .status-pill{font-size:11px;padding:5px 8px;border-radius:999px;background:#142540;color:var(--muted)}
+    .agent-node h3{font-size:15px;margin:12px 0 4px}.role{font-size:12px;color:var(--muted);min-height:32px}.task{font-size:12px;margin:10px 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .progress-row{display:flex;align-items:center;gap:8px}.progress-track{height:6px;background:#07111f;border-radius:99px;flex:1;overflow:hidden}.progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--brand),var(--brand-2))}.progress-label{font-size:11px;color:var(--muted)}
+    .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .card{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);padding:18px;box-shadow:var(--shadow)}
+    .doc-card{display:flex;flex-direction:column;min-height:175px}.doc-icon{font-size:25px}.doc-card h3{font-size:15px;margin:13px 0 7px}.doc-card p{font-size:12px;color:var(--muted);line-height:1.7;flex:1}.doc-card a{color:var(--brand-2);font-size:12px;text-decoration:none}
+    .task-list{display:grid;gap:10px}.task-row{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(130px,1fr) 120px 90px;gap:14px;align-items:center;padding:16px;border:1px solid var(--line);background:var(--panel);border-radius:14px}
+    .task-row strong{font-size:13px}.task-row span{font-size:12px;color:var(--muted)}
+    .mini-progress{height:8px;background:#07111f;border-radius:99px;overflow:hidden}.mini-progress i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--brand-2))}
+    .timeline{border-left:2px solid var(--line);margin-left:9px;padding-left:24px;display:grid;gap:18px}.event{position:relative;border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--panel)}.event:before{content:"";position:absolute;width:12px;height:12px;border-radius:50%;background:var(--brand);left:-31px;top:20px;box-shadow:0 0 0 5px var(--bg)}.event time{color:var(--muted);font-size:11px}.event h3{font-size:14px;margin:6px 0}.event p{margin:0;color:var(--muted);font-size:12px}
+    .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:50px}
+    .loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted)}
+    @media(max-width:1000px){.summary{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:repeat(2,1fr)}.task-row{grid-template-columns:1fr 1fr}.task-row>:nth-child(3),.task-row>:nth-child(4){text-align:left}}
+    @media(max-width:760px){.app{display:block}aside{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line);padding:16px}.brand{padding-bottom:14px}nav{display:flex;overflow:auto}.nav-button{white-space:nowrap}.side-note{display:none}main{padding:22px 16px 45px}header{align-items:flex-start;flex-direction:column}.header-actions{width:100%}.search{flex:1;min-width:0}.summary{grid-template-columns:repeat(2,1fr)}.canvas{min-height:1160px}.agent-node{width:calc(100% - 36px)}.cards{grid-template-columns:1fr}.task-row{grid-template-columns:1fr}}
+  </style>
 </head>
-
-
 <body>
-
-
-<h1>
-🤖 AI Agent 團隊管理中心
-</h1>
-
-
-
-<div id="agent-list">
-
-載入 AI Agent 中...
-
-</div>
-
-<script>
-
-fetch("系統設定/AI代理資料.json")
-
-.then(response => response.json())
-
-.then(data => {
-
-
-let agents = data.AI代理;
-
-
-let html = "";
-
-
-agents.forEach(agent => {
-
-
-html += `
-
-<div class="agent">
-
-<h2>
-🤖 ${agent.名稱}
-</h2>
-
-
-<p>
-角色：
-
-${agent.角色}
-
-</p>
-
-
-<p>
-
-狀態：
-
-<span class="status">
-
-${agent.狀態}
-
-</span>
-
-</p>
-
-
-<p>
-
-目前任務：
-
-${agent.任務}
-
-</p>
-
-<p>
-
-完成進度：
-
-${agent.完成進度 || "尚無資訊"}
-
-</p>
-
-
-<p>
-
-最後更新：
-
-${agent.最後更新 || "尚無資訊"}
-
-</p>
-
-</div>
-
-
-`;
-
-
-});
-
-
-document.getElementById("agent-list").innerHTML = html;
-
-
-});
-
-
-</script>
-
+  <div class="app">
+    <aside>
+      <div class="brand"><div class="brand-mark">◎</div><div><strong>AI Agent OS</strong><small>個人團隊控制中心</small></div></div>
+      <nav aria-label="主要功能">
+        <button class="nav-button active" data-view="團隊畫布">◈ 團隊畫布</button>
+        <button class="nav-button" data-view="文件資料庫">▤ 文件資料庫</button>
+        <button class="nav-button" data-view="任務進度">✓ 任務進度</button>
+        <button class="nav-button" data-view="工作紀錄">◷ 工作紀錄</button>
+      </nav>
+      <div class="side-note">資料來源：GitHub 儲存庫<br>運作方式：GitHub Pages<br>成本：免費・免安裝</div>
+    </aside>
+    <main>
+      <header>
+        <div><h1 id="頁面標題">團隊畫布</h1><p class="subtitle" id="頁面說明">即時查看代理狀態、任務與合作關係</p></div>
+        <div class="header-actions"><input id="搜尋" class="search" type="search" placeholder="搜尋代理或任務…" aria-label="搜尋"><a class="button" href="https://github.com/hswenforwork/AI-Agent-OS" target="_blank" rel="noopener">開啟 GitHub</a></div>
+      </header>
+      <section class="summary" aria-label="團隊摘要">
+        <article class="metric"><div class="metric-label">全部代理</div><div class="metric-value" id="全部代理">—</div><div class="metric-detail">已載入團隊名單</div></article>
+        <article class="metric"><div class="metric-label">工作中</div><div class="metric-value" id="工作中">—</div><div class="metric-detail">目前正在執行</div></article>
+        <article class="metric"><div class="metric-label">平均進度</div><div class="metric-value" id="平均進度">—</div><div class="metric-detail">所有代理的平均值</div></article>
+        <article class="metric"><div class="metric-label">知識文件</div><div class="metric-value" id="知識文件">—</div><div class="metric-detail">可快速查閱</div></article>
+      </section>
+      <section id="團隊畫布" class="view active">
+        <div class="section-head"><h2>代理協作畫布</h2><span>可拖曳代理卡片，位置會保存在這台瀏覽器</span></div>
+        <div class="canvas" id="畫布"><svg id="連線圖層" aria-hidden="true"></svg><div id="代理節點區"><div class="loading">正在讀取 AI 代理資料…</div></div></div>
+      </section>
+      <section id="文件資料庫" class="view"><div class="section-head"><h2>知識與規則</h2><span>點選即可在 GitHub 閱讀</span></div><div class="cards" id="文件卡片"></div></section>
+      <section id="任務進度" class="view"><div class="section-head"><h2>目前任務</h2><span>進度由代理資料自動彙整</span></div><div class="task-list" id="任務清單"></div></section>
+      <section id="工作紀錄" class="view"><div class="section-head"><h2>最近活動</h2><span>依最後更新時間排列</span></div><div class="timeline" id="活動時間軸"></div></section>
+    </main>
+  </div>
+  <script>
+    const 儲存庫網址 = "https://github.com/hswenforwork/AI-Agent-OS/blob/main/";
+    const 預設備援資料 = {
+      AI代理: [
+        {名稱:"團隊主管",圖示:"🧭",角色:"統整目標、分派任務與決策把關",狀態:"工作中",任務:"協調 MVP 建置",完成進度:75,最後更新:"2026-09-14 11:30",位置:{x:390,y:40}},
+        {名稱:"研究代理",圖示:"🔎",角色:"資料研究與資訊整理專家",狀態:"工作中",任務:"整理 AI 平台參考資料",完成進度:60,最後更新:"2026-09-14 11:20",位置:{x:70,y:230}},
+        {名稱:"規劃代理",圖示:"🗺️",角色:"需求拆解與任務規劃專家",狀態:"等待中",任務:"等待下一個規劃任務",完成進度:20,最後更新:"2026-09-14 11:05",位置:{x:330,y:250}},
+        {名稱:"開發代理",圖示:"💻",角色:"前端功能與資料整合專家",狀態:"工作中",任務:"建立團隊視覺化畫布",完成進度:85,最後更新:"2026-09-14 11:40",位置:{x:590,y:250}},
+        {名稱:"檢查代理",圖示:"🛡️",角色:"品質、錯誤與完成條件檢查",狀態:"待命中",任務:"檢查畫面與資料格式",完成進度:40,最後更新:"2026-09-14 11:10",位置:{x:210,y:450}},
+        {名稱:"文件代理",圖示:"📝",角色:"文件維護與知識庫整理專家",狀態:"已完成",任務:"完成 MVP 使用說明",完成進度:100,最後更新:"2026-09-14 11:45",位置:{x:510,y:450}}
+      ],
+      連線:[["團隊主管","研究代理"],["團隊主管","規劃代理"],["團隊主管","開發代理"],["規劃代理","檢查代理"],["開發代理","文件代理"]]
+    };
+    const 文件 = [
+      {圖示:"📘",名稱:"平台操作說明",說明:"了解平台資料怎麼更新、代理怎麼協作。",路徑:"知識資料庫/平台操作說明.md"},
+      {圖示:"📏",名稱:"AI 工作規則",說明:"所有代理共同遵守的工作原則與交付規範。",路徑:"知識資料庫/AI工作規則.md"},
+      {圖示:"🧠",名稱:"資料庫首頁",說明:"集中存放每個專案都會使用的參考資訊。",路徑:"知識資料庫/README.md"},
+      {圖示:"📚",名稱:"學習紀錄",說明:"保留新知、測試結果與可以重複使用的方法。",路徑:"知識資料庫/學習紀錄.md"},
+      {圖示:"✅",名稱:"完成報告",說明:"查看已完成工作、驗證結果與交付內容。",路徑:"工作紀錄/完成報告.md"},
+      {圖示:"⚠️",名稱:"問題紀錄",說明:"追蹤已知問題、影響範圍與處理狀態。",路徑:"工作紀錄/問題紀錄.md"}
+    ];
+    let 系統資料 = 預設備援資料;
+    let 拖曳資料 = null;
+    const 安全文字 = value => String(value ?? "尚無資訊").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
+    const 進度數字 = value => Math.max(0,Math.min(100,Number.parseInt(value,10)||0));
+    const 狀態文字 = value => String(value ?? "待命中").replace(/^[^\p{L}\p{N}]+/u,"").trim() || "待命中";
+    const 狀態顏色 = status => status.includes("工作") ? "var(--green)" : status.includes("完成") ? "var(--blue)" : status.includes("等待") ? "var(--yellow)" : "var(--gray)";
+    const 取得代理 = () => Array.isArray(系統資料.AI代理) ? 系統資料.AI代理 : [];
+    function 更新摘要(){
+      const 代理=取得代理(),平均=代理.length?Math.round(代理.reduce((sum,a)=>sum+進度數字(a.完成進度),0)/代理.length):0;
+      document.getElementById("全部代理").textContent=代理.length;
+      document.getElementById("工作中").textContent=代理.filter(a=>狀態文字(a.狀態).includes("工作")).length;
+      document.getElementById("平均進度").textContent=`${平均}%`;
+      document.getElementById("知識文件").textContent=文件.length;
+    }
+    function 預設位置(index){const mobile=window.innerWidth<760;if(mobile)return {x:18,y:22+index*185};return {x:22+(index%3)*260,y:28+Math.floor(index/3)*190}}
+    function 位置資料(agent,index){if(window.innerWidth<760)return 預設位置(index);try{const saved=JSON.parse(localStorage.getItem(`代理位置-${agent.名稱}`));if(saved&&Number.isFinite(saved.x)&&Number.isFinite(saved.y))return saved}catch(e){}const p=agent.位置||預設位置(index);return {x:Number(p.x)||0,y:Number(p.y)||0}}
+    function 顯示畫布(filter=""){
+      const 區=document.getElementById("代理節點區"),代理=取得代理().filter(a=>`${a.名稱}${a.角色}${a.任務}`.toLowerCase().includes(filter.toLowerCase()));
+      區.innerHTML=代理.length?代理.map((a,i)=>{const p=位置資料(a,i),status=狀態文字(a.狀態),progress=進度數字(a.完成進度);return `<article class="agent-node" data-name="${安全文字(a.名稱)}" style="left:${p.x}px;top:${p.y}px"><div class="agent-top"><div class="agent-icon">${安全文字(a.圖示||"🤖")}</div><span class="status-pill" style="color:${狀態顏色(status)}">● ${安全文字(status)}</span></div><h3>${安全文字(a.名稱)}</h3><div class="role">${安全文字(a.角色)}</div><div class="task">${安全文字(a.任務)}</div><div class="progress-row"><div class="progress-track"><div class="progress-fill" style="width:${progress}%"></div></div><span class="progress-label">${progress}%</span></div></article>`}).join(""):'<div class="empty">找不到符合的代理</div>';
+      區.querySelectorAll(".agent-node").forEach(node=>node.addEventListener("pointerdown",開始拖曳));requestAnimationFrame(畫連線);
+    }
+    function 畫連線(){
+      const svg=document.getElementById("連線圖層"),canvas=document.getElementById("畫布"),box=canvas.getBoundingClientRect(),nodes={};document.querySelectorAll(".agent-node").forEach(n=>{const r=n.getBoundingClientRect();nodes[n.dataset.name]={x:r.left-box.left+r.width/2,y:r.top-box.top+r.height/2}});const links=Array.isArray(系統資料.連線)?系統資料.連線:預設備援資料.連線;svg.setAttribute("viewBox",`0 0 ${box.width} ${box.height}`);svg.innerHTML=links.map(([a,b])=>nodes[a]&&nodes[b]?`<path d="M ${nodes[a].x} ${nodes[a].y} C ${nodes[a].x} ${(nodes[a].y+nodes[b].y)/2}, ${nodes[b].x} ${(nodes[a].y+nodes[b].y)/2}, ${nodes[b].x} ${nodes[b].y}" fill="none" stroke="#405579" stroke-width="2" stroke-dasharray="6 6"/>`:"").join("");
+    }
+    function 開始拖曳(e){const node=e.currentTarget,canvas=document.getElementById("畫布"),r=node.getBoundingClientRect();node.setPointerCapture(e.pointerId);node.classList.add("dragging");拖曳資料={node,canvas,dx:e.clientX-r.left,dy:e.clientY-r.top};node.addEventListener("pointermove",拖曳中);node.addEventListener("pointerup",結束拖曳,{once:true})}
+    function 拖曳中(e){if(!拖曳資料)return;const {node,canvas,dx,dy}=拖曳資料,r=canvas.getBoundingClientRect();const x=Math.max(0,Math.min(r.width-node.offsetWidth,e.clientX-r.left-dx)),y=Math.max(0,Math.min(r.height-node.offsetHeight,e.clientY-r.top-dy));node.style.left=`${x}px`;node.style.top=`${y}px`;畫連線()}
+    function 結束拖曳(){if(!拖曳資料)return;const {node}=拖曳資料;node.classList.remove("dragging");node.removeEventListener("pointermove",拖曳中);localStorage.setItem(`代理位置-${node.dataset.name}`,JSON.stringify({x:parseFloat(node.style.left),y:parseFloat(node.style.top)}));拖曳資料=null}
+    function 顯示文件(filter=""){const list=文件.filter(d=>`${d.名稱}${d.說明}`.toLowerCase().includes(filter.toLowerCase()));document.getElementById("文件卡片").innerHTML=list.length?list.map(d=>`<article class="card doc-card"><div class="doc-icon">${d.圖示}</div><h3>${安全文字(d.名稱)}</h3><p>${安全文字(d.說明)}</p><a href="${儲存庫網址+encodeURI(d.路徑)}" target="_blank" rel="noopener">開啟文件 →</a></article>`).join(""):'<div class="empty">找不到符合的文件</div>'}
+    function 顯示任務(filter=""){const list=取得代理().filter(a=>`${a.名稱}${a.任務}`.toLowerCase().includes(filter.toLowerCase()));document.getElementById("任務清單").innerHTML=list.length?list.map(a=>{const p=進度數字(a.完成進度);return `<article class="task-row"><strong>${安全文字(a.任務)}</strong><span>負責代理：${安全文字(a.名稱)}</span><div class="mini-progress" title="完成 ${p}%"><i style="width:${p}%"></i></div><span>${p}%</span></article>`}).join(""):'<div class="empty">找不到符合的任務</div>'}
+    function 顯示活動(filter=""){const list=[...取得代理()].filter(a=>`${a.名稱}${a.任務}`.toLowerCase().includes(filter.toLowerCase())).sort((a,b)=>String(b.最後更新||"").localeCompare(String(a.最後更新||"")));document.getElementById("活動時間軸").innerHTML=list.length?list.map(a=>`<article class="event"><time>${安全文字(a.最後更新)}</time><h3>${安全文字(a.名稱)}・${安全文字(狀態文字(a.狀態))}</h3><p>${安全文字(a.任務)}（完成 ${進度數字(a.完成進度)}%）</p></article>`).join(""):'<div class="empty">找不到符合的紀錄</div>'}
+    function 全部重繪(filter=""){更新摘要();顯示畫布(filter);顯示文件(filter);顯示任務(filter);顯示活動(filter)}
+    document.querySelectorAll(".nav-button").forEach(button=>button.addEventListener("click",()=>{document.querySelectorAll(".nav-button,.view").forEach(el=>el.classList.remove("active"));button.classList.add("active");document.getElementById(button.dataset.view).classList.add("active");const 說明={團隊畫布:"即時查看代理狀態、任務與合作關係",文件資料庫:"快速開啟團隊規則、知識與工作文件",任務進度:"依代理彙整目前任務與完成進度",工作紀錄:"查看所有代理最近一次更新"};document.getElementById("頁面標題").textContent=button.dataset.view;document.getElementById("頁面說明").textContent=說明[button.dataset.view];if(button.dataset.view==="團隊畫布")requestAnimationFrame(畫連線)}));
+    document.getElementById("搜尋").addEventListener("input",e=>全部重繪(e.target.value.trim()));window.addEventListener("resize",()=>requestAnimationFrame(畫連線));
+    fetch("系統設定/AI代理資料.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json()}).then(data=>{if(!Array.isArray(data.AI代理))throw new Error("資料格式錯誤");系統資料={...預設備援資料,...data};全部重繪()}).catch(error=>{console.warn("改用內建備援資料：",error);全部重繪()});
+  </script>
 </body>
-
 </html>
