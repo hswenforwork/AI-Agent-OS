@@ -1,32 +1,40 @@
 # Google Gemini API 串接說明
 
-## 安全架構
+## 目前連線方式
 
-`GitHub Pages → Cloudflare Worker → Google Gemini API`
+`GitHub Pages 瀏覽器 → Google Gemini API`
 
-Gemini API 金鑰只存放在 Cloudflare Worker 的加密機密設定，不可寫進 GitHub、HTML、JSON 或聊天訊息。
+這是個人 MVP 使用的最簡單方式，不需要安裝軟體，也不需要建立 Cloudflare Worker。
 
-## Worker 需要的兩個機密
+## 使用方法
 
-| 名稱 | 用途 |
-|---|---|
-| `GEMINI_API_KEY` | 您在 Google AI Studio 建立的 Gemini API 金鑰 |
-| `APP_ACCESS_KEY` | 您自行設定的平台私人通行碼 |
+1. 前往 [Google AI Studio](https://aistudio.google.com/apikey) 建立 Gemini API 金鑰。
+2. 開啟 AI Agent OS 的「AI 工作台」。
+3. 將金鑰貼入「Gemini API 金鑰」。
+4. 選擇 AI 代理與模型。
+5. 點選「測試連線」，成功後即可開始對話。
 
-## 部署後要更新的設定
+## 金鑰保存方式
 
-Cloudflare 會提供一個以 `workers.dev` 結尾的網址。請將該網址填入 `系統設定/AI服務設定.json` 的 `API網址`，不要在網址後方加入 `/chat`。
+- 金鑰只暫存在目前分頁的記憶體。
+- 金鑰不會寫入 GitHub、JSON、Markdown 或瀏覽器 `localStorage`。
+- 重新整理或關閉分頁後，金鑰會自動消失。
+- 平台只會把金鑰傳送到 Google Gemini API。
 
 ## 安全注意事項
 
-- 不要把 Gemini API 金鑰貼到聊天中。
-- 不要把 Gemini API 金鑰提交到 GitHub。
-- 公用電腦使用完畢後，請關閉網頁並登出相關帳號。
-- 私人通行碼不會保存在平台，重新整理頁面後需要重新輸入。
-- Cloudflare Worker 只允許 `hswenforwork.github.io` 網站來源及指定模型。
+- 本方式適合個人 MVP，不適合開放給不特定使用者。
+- 公用電腦請使用無痕視窗，完成後關閉全部無痕視窗並登出 Google 與 GitHub。
+- 不要讓瀏覽器記住金鑰，也不要將金鑰貼到聊天室或 GitHub。
+- 如果金鑰疑似外洩，請立即到 Google AI Studio 撤銷並重新建立。
+- 建議在 Google Cloud 為金鑰設定 API 限制與使用額度警示。
 
 ## 第一階段模型
 
 - Gemini 3.8 Flash：一般工作與快速回覆。
 - Gemini 3.5 Flash-Lite：大量、低成本任務。
 - Gemini 3.1 Pro Preview：需要較高推理能力的任務。
+
+## 進階備用方案
+
+儲存庫內的 `雲端函式` 資料夾保留作為未來正式公開服務的安全升級方案；目前網站不會呼叫其中的 Cloudflare Worker 程式。
