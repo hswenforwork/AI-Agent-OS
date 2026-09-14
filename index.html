@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="以 GitHub Pages 運作的個人 AI Agent 團隊管理平台">
+  <meta name="description" content="以 GitHub Pages 運作的個人多元 AI 代理團隊管理平台">
   <title>個人 AI Agent 作業系統</title>
   <style>
     :root {
       --bg:#07111f; --panel:#0d1a2c; --panel-2:#12223a; --line:#243753;
       --text:#edf5ff; --muted:#8fa5bf; --brand:#7c6cff; --brand-2:#34d3b4;
-      --green:#37d67a; --yellow:#f4c95d; --blue:#58a6ff; --gray:#7f91a8;
+      --green:#37d67a; --yellow:#f4c95d; --blue:#58a6ff; --gray:#7f91a8; --red:#e6604f;
       --shadow:0 18px 45px rgba(0,0,0,.22); --radius:18px;
     }
     *{box-sizing:border-box}
@@ -59,17 +59,20 @@
     .task-row strong{font-size:13px}.task-row span{font-size:12px;color:var(--muted)}
     .mini-progress{height:8px;background:#07111f;border-radius:99px;overflow:hidden}.mini-progress i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--brand-2))}
     .timeline{border-left:2px solid var(--line);margin-left:9px;padding-left:24px;display:grid;gap:18px}.event{position:relative;border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--panel)}.event:before{content:"";position:absolute;width:12px;height:12px;border-radius:50%;background:var(--brand);left:-31px;top:20px;box-shadow:0 0 0 5px var(--bg)}.event time{color:var(--muted);font-size:11px}.event h3{font-size:14px;margin:6px 0}.event p{margin:0;color:var(--muted);font-size:12px}
-    .ai-workbench{display:grid;grid-template-columns:300px minmax(0,1fr);gap:14px;min-height:600px}.ai-settings,.chat-panel{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow)}.ai-settings{padding:18px}.ai-settings h3{margin:0 0 16px;font-size:15px}.field{display:grid;gap:7px;margin-bottom:15px}.field label{font-size:12px;color:var(--muted)}.field select,.field input{width:100%;border:1px solid var(--line);border-radius:10px;background:#091627;color:var(--text);padding:10px}.key-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px}.key-row .small-button{white-space:nowrap}.agent-profile{display:grid;gap:10px;margin:16px 0;padding:13px;border:1px solid var(--line);border-radius:12px;background:#091627}.profile-title{display:flex;gap:9px;align-items:center}.profile-title b{font-size:13px}.profile-title small{display:block;color:var(--muted);margin-top:2px}.profile-item strong{display:block;color:var(--brand-2);font-size:10px;margin-bottom:3px}.profile-item span{font-size:11px;line-height:1.55;color:var(--muted)}.profile-tags{display:flex;gap:5px;flex-wrap:wrap}.profile-tag{font-size:10px;padding:4px 6px;border-radius:7px;background:#172a47;color:#b9c9dc}.ai-note{font-size:11px;line-height:1.7;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}.service-status{display:flex;gap:7px;align-items:flex-start;margin:13px 0;color:var(--muted);font-size:11px;line-height:1.5}.chat-panel{display:flex;flex-direction:column;overflow:hidden}.chat-head{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.chat-head strong{font-size:14px}.chat-messages{padding:20px;display:flex;flex-direction:column;gap:14px;overflow:auto;min-height:420px;max-height:520px}.message{max-width:88%;padding:13px 15px;border-radius:14px;line-height:1.7;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}.message.user{align-self:flex-end;background:linear-gradient(135deg,var(--brand),#5573e7)}.message.assistant{align-self:flex-start;background:var(--panel-2);border:1px solid var(--line)}.message.system{align-self:center;background:transparent;color:var(--muted);text-align:center;font-size:12px}.chat-input{border-top:1px solid var(--line);padding:14px;display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px}.chat-input textarea{resize:none;min-height:62px;max-height:140px;border:1px solid var(--line);border-radius:12px;background:#091627;color:var(--text);padding:12px;outline:none}.chat-input textarea:focus{border-color:var(--brand)}.send-button,.team-button{border:0;border-radius:12px;color:white;padding:0 17px;cursor:pointer;font-weight:700}.send-button{background:linear-gradient(135deg,var(--brand),#5573e7)}.team-button{background:linear-gradient(135deg,#138d75,#2db89b)}.send-button:disabled,.team-button:disabled{opacity:.55;cursor:not-allowed}.small-button{border:1px solid var(--line);background:transparent;color:var(--muted);padding:7px 10px;border-radius:9px;cursor:pointer;font-size:11px}.small-button:hover{color:var(--text);border-color:var(--brand)}.agent-open{float:right;border:0;background:transparent;color:var(--brand-2);padding:5px 0;cursor:pointer;font-size:10px}
+    .ai-workbench{display:grid;grid-template-columns:300px minmax(0,1fr);gap:14px;min-height:600px}.ai-settings,.chat-panel{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow)}.ai-settings{padding:18px}.ai-settings h3{margin:0 0 16px;font-size:15px}.field{display:grid;gap:7px;margin-bottom:15px}.field label{font-size:12px;color:var(--muted)}.field select,.field input{width:100%;border:1px solid var(--line);border-radius:10px;background:#091627;color:var(--text);padding:10px}.key-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px}.key-row .small-button{white-space:nowrap}.key-block{margin-bottom:15px}.key-hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6}.key-hint a{color:var(--brand-2)}.agent-profile{display:grid;gap:10px;margin:16px 0;padding:13px;border:1px solid var(--line);border-radius:12px;background:#091627}.profile-title{display:flex;gap:9px;align-items:center}.profile-title b{font-size:13px}.profile-title small{display:block;color:var(--muted);margin-top:2px}.profile-item strong{display:block;color:var(--brand-2);font-size:10px;margin-bottom:3px}.profile-item span{font-size:11px;line-height:1.55;color:var(--muted)}.profile-tags{display:flex;gap:5px;flex-wrap:wrap}.profile-tag{font-size:10px;padding:4px 6px;border-radius:7px;background:#172a47;color:#b9c9dc}.ai-note{font-size:11px;line-height:1.7;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}.service-status{display:flex;gap:7px;align-items:flex-start;margin:13px 0;color:var(--muted);font-size:11px;line-height:1.5}
+    .budget-box{border:1px solid var(--line);border-radius:12px;background:#091627;padding:13px;margin:15px 0;display:grid;gap:9px}.budget-box h4{margin:0;font-size:12px;color:var(--muted);font-weight:600}.budget-status{font-size:13px;font-weight:700}.budget-box input{width:100%;border:1px solid var(--line);border-radius:9px;background:#0d1a2c;color:var(--text);padding:8px}
+    .team-options{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);padding:10px 18px;border-top:1px solid var(--line)}.team-options input{width:auto}
+    .chat-panel{display:flex;flex-direction:column;overflow:hidden}.chat-head{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.chat-head strong{font-size:14px}.chat-messages{padding:20px;display:flex;flex-direction:column;gap:14px;overflow:auto;min-height:380px;max-height:480px}.message{max-width:88%;padding:13px 15px;border-radius:14px;line-height:1.7;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}.message.user{align-self:flex-end;background:linear-gradient(135deg,var(--brand),#5573e7)}.message.assistant{align-self:flex-start;background:var(--panel-2);border:1px solid var(--line)}.message.system{align-self:center;background:transparent;color:var(--muted);text-align:center;font-size:12px}.chat-input{border-top:1px solid var(--line);padding:14px;display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:10px}.chat-input textarea{resize:none;min-height:62px;max-height:140px;border:1px solid var(--line);border-radius:12px;background:#091627;color:var(--text);padding:12px;outline:none}.chat-input textarea:focus{border-color:var(--brand)}.send-button,.team-button,.stop-button{border:0;border-radius:12px;color:white;padding:0 17px;cursor:pointer;font-weight:700}.send-button{background:linear-gradient(135deg,var(--brand),#5573e7)}.team-button{background:linear-gradient(135deg,#138d75,#2db89b)}.stop-button{background:linear-gradient(135deg,#c0392b,var(--red))}.send-button:disabled,.team-button:disabled,.stop-button:disabled{opacity:.55;cursor:not-allowed}.small-button{border:1px solid var(--line);background:transparent;color:var(--muted);padding:7px 10px;border-radius:9px;cursor:pointer;font-size:11px}.small-button:hover{color:var(--text);border-color:var(--brand)}.agent-open{float:right;border:0;background:transparent;color:var(--brand-2);padding:5px 0;cursor:pointer;font-size:10px}
     .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:50px}
     .loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted)}
     @media(max-width:1000px){.summary{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:repeat(2,1fr)}.task-row{grid-template-columns:1fr 1fr}.task-row>:nth-child(3),.task-row>:nth-child(4){text-align:left}}
-    @media(max-width:760px){.app{display:block}aside{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line);padding:16px}.brand{padding-bottom:14px}nav{display:flex;overflow:auto}.nav-button{white-space:nowrap}.side-note{display:none}main{padding:22px 16px 45px}header{align-items:flex-start;flex-direction:column}.header-actions{width:100%}.search{flex:1;min-width:0}.summary{grid-template-columns:repeat(2,1fr)}.canvas{min-height:1160px}.agent-node{width:calc(100% - 36px)}.cards{grid-template-columns:1fr}.task-row{grid-template-columns:1fr}.ai-workbench{grid-template-columns:1fr}.message{max-width:94%}.chat-input{grid-template-columns:1fr 1fr}.chat-input textarea{grid-column:1/-1}.send-button,.team-button{min-height:46px}}
+    @media(max-width:760px){.app{display:block}aside{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line);padding:16px}.brand{padding-bottom:14px}nav{display:flex;overflow:auto}.nav-button{white-space:nowrap}.side-note{display:none}main{padding:22px 16px 45px}header{align-items:flex-start;flex-direction:column}.header-actions{width:100%}.search{flex:1;min-width:0}.summary{grid-template-columns:repeat(2,1fr)}.canvas{min-height:1160px}.agent-node{width:calc(100% - 36px)}.cards{grid-template-columns:1fr}.task-row{grid-template-columns:1fr}.ai-workbench{grid-template-columns:1fr}.message{max-width:94%}.chat-input{grid-template-columns:1fr 1fr}.chat-input textarea{grid-column:1/-1}.send-button,.team-button,.stop-button{min-height:46px}}
   </style>
 </head>
 <body>
   <div class="app">
     <aside>
-      <div class="brand"><div class="brand-mark">◎</div><div><strong>AI Agent OS</strong><small>個人團隊控制中心</small></div></div>
+      <div class="brand"><div class="brand-mark">◎</div><div><strong>AI Agent OS</strong><small>個人多元 AI 團隊控制中心</small></div></div>
       <nav aria-label="主要功能">
         <button class="nav-button active" data-view="團隊畫布">◈ 團隊畫布</button>
         <button class="nav-button" data-view="AI工作台">✦ AI 工作台</button>
@@ -77,7 +80,7 @@
         <button class="nav-button" data-view="任務進度">✓ 任務進度</button>
         <button class="nav-button" data-view="工作紀錄">◷ 工作紀錄</button>
       </nav>
-      <div class="side-note">資料來源：GitHub 儲存庫<br>運作方式：GitHub Pages<br>成本：免費・免安裝</div>
+      <div class="side-note">資料來源：GitHub 儲存庫<br>運作方式：GitHub Pages<br>平台本身：免費・免安裝<br>AI 呼叫：依你貼上的金鑰各自計費</div>
     </aside>
     <main>
       <header>
@@ -88,33 +91,37 @@
         <article class="metric"><div class="metric-label">全部代理</div><div class="metric-value" id="全部代理">—</div><div class="metric-detail">已載入團隊名單</div></article>
         <article class="metric"><div class="metric-label">工作中</div><div class="metric-value" id="工作中">—</div><div class="metric-detail">目前正在執行</div></article>
         <article class="metric"><div class="metric-label">平均進度</div><div class="metric-value" id="平均進度">—</div><div class="metric-detail">所有代理的平均值</div></article>
-        <article class="metric"><div class="metric-label">知識文件</div><div class="metric-value" id="知識文件">—</div><div class="metric-detail">可快速查閱</div></article>
+        <article class="metric"><div class="metric-label">本月預估花費</div><div class="metric-value" id="摘要本月花費">—</div><div class="metric-detail" id="摘要本月預算">設定中</div></article>
       </section>
       <section id="團隊畫布" class="view active">
         <div class="section-head"><h2>代理協作畫布</h2><span>可拖曳代理卡片，位置會保存在這台瀏覽器</span></div>
         <div class="canvas" id="畫布"><svg id="連線圖層" aria-hidden="true"></svg><div id="代理節點區"><div class="loading">正在讀取 AI 代理資料…</div></div></div>
       </section>
       <section id="AI工作台" class="view">
-        <div class="section-head"><h2>多模型 AI 工作台</h2><span>第一階段：Google Gemini API</span></div>
+        <div class="section-head"><h2>多模型 AI 工作台</h2><span>Gemini・OpenAI・Claude，每次任務手動選擇要用哪個模型</span></div>
         <div class="ai-workbench">
           <div class="ai-settings">
             <h3>本次對話設定</h3>
             <div class="field"><label for="選擇代理">AI 代理</label><select id="選擇代理"></select></div>
-            <div class="field"><label for="選擇模型">AI 模型</label><select id="選擇模型">
-              <option value="gemini-3.8-flash">Gemini 3.8 Flash・快速</option>
-              <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash-Lite・省成本</option>
-              <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro・可能需要付費額度</option>
-            </select></div>
-            <div class="field"><label for="Gemini金鑰">Gemini API 金鑰</label><div class="key-row"><input id="Gemini金鑰" type="password" autocomplete="new-password" autocapitalize="off" spellcheck="false" placeholder="貼上 AIza 開頭的金鑰"><button class="small-button" id="切換金鑰顯示" type="button" aria-pressed="false">顯示</button></div></div>
+            <div class="field"><label for="選擇模型">AI 模型（依供應商分組）</label><select id="選擇模型"></select></div>
+            <div class="key-block" id="金鑰區"></div>
             <button class="button" id="測試AI" type="button">測試連線（少量額度）</button>
-            <div class="service-status"><span id="服務狀態燈">○</span><span id="服務狀態">等待輸入 Gemini 金鑰</span></div>
+            <div class="service-status"><span id="服務狀態燈">○</span><span id="服務狀態">等待選擇模型與輸入金鑰</span></div>
+            <div class="budget-box">
+              <h4>本月費用預估（僅供參考，非供應商官方帳單）</h4>
+              <div class="budget-status" id="本月花費顯示">尚無資料</div>
+              <label for="月預算" style="font-size:11px;color:var(--muted)">每月預算（新台幣）</label>
+              <input id="月預算" type="number" min="0" step="50">
+              <button class="small-button" id="重設本月花費" type="button">重設本月花費紀錄</button>
+            </div>
             <div class="agent-profile" id="代理檔案"><span class="profile-item">正在載入代理設定…</span></div>
-            <p class="ai-note">每位代理都會套用自己的模型、人格、目標、專業、技能、工具與知識文件。金鑰只暫存在目前分頁，不會寫入 GitHub 或瀏覽器儲存空間。</p>
+            <p class="ai-note">每位代理都會套用自己的模型、人格、目標、專業、技能、工具與知識文件（含團隊共用的「已知問題與規則」）。金鑰只暫存在目前分頁，不會寫入 GitHub 或瀏覽器儲存空間。費用是依文字長度粗略估算，實際請以各供應商帳單為準。</p>
           </div>
           <div class="chat-panel">
             <div class="chat-head"><strong id="對話標題">與團隊主管對話</strong><button class="small-button" id="清除對話" type="button">清除對話</button></div>
-            <div class="chat-messages" id="對話內容"><div class="message system">選擇代理與模型後，即可開始實際 AI 對話。對話只保留在目前頁面。</div></div>
-            <form class="chat-input" id="對話表單"><textarea id="使用者訊息" placeholder="輸入任務；可交給單一代理，或啟動六位代理依序協作…" required></textarea><button class="send-button" id="傳送訊息" type="submit">交給此代理</button><button class="team-button" id="啟動團隊" type="button" title="依序呼叫六位代理，約使用六次 Gemini API">啟動全隊</button></form>
+            <div class="chat-messages" id="對話內容"><div class="message system">選擇代理與模型、貼上對應金鑰後，即可開始實際 AI 對話。對話只保留在目前頁面。</div></div>
+            <div class="team-options"><input id="略過品保" type="checkbox"><label for="略過品保">啟動全隊時略過品保檢查（省成本，跳過檢查代理這一階段；有風險的任務不建議勾選）</label></div>
+            <form class="chat-input" id="對話表單"><textarea id="使用者訊息" placeholder="輸入任務；可交給單一代理，或啟動團隊依序協作（每階段完成會先暫停等你核准）…" required></textarea><button class="send-button" id="傳送訊息" type="submit">交給此代理</button><button class="team-button" id="啟動團隊" type="button" title="依序呼叫團隊各階段；每完成一階段會暫停，顯示結果與預估花費，等你按下核准才繼續下一階段">啟動全隊</button><button class="stop-button" id="停止團隊" type="button" style="display:none">停止</button></form>
           </div>
         </div>
       </section>
@@ -149,27 +156,98 @@
       ,{圖示:"💻",名稱:"開發代理職務",說明:"查看開發代理的技術專業與實作規範。",路徑:"AI代理/開發代理.md"}
       ,{圖示:"🛡️",名稱:"檢查代理職務",說明:"查看檢查代理的測試、安全與驗收規則。",路徑:"AI代理/檢查代理.md"}
       ,{圖示:"📝",名稱:"文件代理職務",說明:"查看文件代理的教學與知識整理規則。",路徑:"AI代理/文件代理.md"}
+      ,{圖示:"🧩",名稱:"已知問題與規則",說明:"所有代理共用的錯誤記憶，開始任務前都會先讀這份。",路徑:"知識資料庫/已知問題與規則.md"}
+      ,{圖示:"🔌",名稱:"多模型 API 串接說明",說明:"Gemini、OpenAI、Claude 金鑰申請與安全注意事項。",路徑:"知識資料庫/多模型API串接說明.md"}
+      ,{圖示:"🗺️",名稱:"開發計畫與路線圖",說明:"這一版做了什麼、下一步的 Supabase／自動化規劃。",路徑:"知識資料庫/開發計畫與路線圖.md"}
     ];
     let 系統資料 = 預設備援資料;
     let 拖曳資料 = null;
     const 代理記憶 = new Map();
     const 知識快取 = new Map();
     let 團隊執行中 = false;
-    let AI服務設定 = {供應商:"Google Gemini",連線方式:"瀏覽器直接連線",模型:[]};
+    let 團隊狀態 = null;
+    let AI服務設定 = {供應商:[],匯率:{USD轉TWD:31.6}};
     const 安全文字 = value => String(value ?? "尚無資訊").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
     const 進度數字 = value => Math.max(0,Math.min(100,Number.parseInt(value,10)||0));
     const 狀態文字 = value => String(value ?? "待命中").replace(/^[^\p{L}\p{N}]+/u,"").trim() || "待命中";
     const 狀態顏色 = status => status.includes("工作") ? "var(--green)" : status.includes("完成") ? "var(--blue)" : status.includes("等待") ? "var(--yellow)" : "var(--gray)";
     const 取得代理 = () => Array.isArray(系統資料.AI代理) ? 系統資料.AI代理 : [];
+
+    // ---------- 費用估算與月預算 ----------
+    const 估算tokens = text => Math.max(1, Math.ceil(String(text||"").length/2));
+    function 估算成本(inputText, outputText, modelInfo){
+      if(!modelInfo) return 0;
+      const inTok=估算tokens(inputText), outTok=估算tokens(outputText);
+      return inTok/1e6*(Number(modelInfo.輸入價每百萬)||0) + outTok/1e6*(Number(modelInfo.輸出價每百萬)||0);
+    }
+    const USD轉TWD = usd => usd * ((AI服務設定.匯率 && AI服務設定.匯率.USD轉TWD) || 31.6);
+    const 目前年月鍵 = () => {const d=new Date();return `AI-Agent-OS-本月花費-${d.getFullYear()}-${d.getMonth()+1}`};
+    const 讀取本月花費 = () => Number(localStorage.getItem(目前年月鍵()))||0;
+    function 累加本月花費(usd){const total=讀取本月花費()+Math.max(0,usd||0);try{localStorage.setItem(目前年月鍵(),String(total))}catch(e){}更新花費顯示();return total}
+    function 讀取月預算TWD(){const saved=Number(localStorage.getItem("AI-Agent-OS-月預算TWD"));return Number.isFinite(saved)&&saved>0?saved:800}
+    function 設定月預算TWD(value){const num=Math.max(0,Number(value)||0);try{localStorage.setItem("AI-Agent-OS-月預算TWD",String(num))}catch(e){}更新花費顯示()}
+    function 更新花費顯示(){
+      const spentUSD=讀取本月花費(),spentTWD=USD轉TWD(spentUSD),budget=讀取月預算TWD();
+      const pct=budget>0?Math.round(spentTWD/budget*100):0;
+      const statusEl=document.getElementById("本月花費顯示");
+      if(statusEl){statusEl.textContent=`約 NT$${spentTWD.toFixed(0)}（US$${spentUSD.toFixed(3)}）／預算 NT$${budget}（${pct}%）`;statusEl.style.color=pct>=100?"var(--red)":pct>=80?"var(--yellow)":"var(--brand-2)"}
+      const budgetInput=document.getElementById("月預算");if(budgetInput&&document.activeElement!==budgetInput)budgetInput.value=budget;
+      const 摘要花費=document.getElementById("摘要本月花費"),摘要預算=document.getElementById("摘要本月預算");
+      if(摘要花費)摘要花費.textContent=`NT$${spentTWD.toFixed(0)}`;
+      if(摘要預算){摘要預算.textContent=`預算 NT$${budget}（${pct}%）`;摘要預算.style.color=pct>=100?"var(--red)":pct>=80?"var(--yellow)":"var(--brand-2)"}
+    }
+    function 超出預算確認(estUSD){
+      const projectedTWD=USD轉TWD(讀取本月花費()+estUSD),budget=讀取月預算TWD();
+      if(projectedTWD<=budget)return true;
+      return confirm(`這次預估花費約 US$${estUSD.toFixed(4)}，加上後本月累計會到約 NT$${projectedTWD.toFixed(0)}，超過你設定的 NT$${budget} 預算。要繼續執行嗎？`);
+    }
+
+    // ---------- 多供應商 AI 服務設定 ----------
+    function 取得供應商(code){return (AI服務設定.供應商||[]).find(p=>p.代碼===code)}
+    function 取得模型資訊(providerCode,modelCode){const p=取得供應商(providerCode);return p&&(p.模型||[]).find(m=>m.代碼===modelCode)}
+    function 目前供應商與模型(){
+      const val=(document.getElementById("選擇模型").value||"").split(":");
+      const providerCode=val[0]||"",modelCode=val[1]||"";
+      return {providerCode,modelCode,provider:取得供應商(providerCode),modelInfo:取得模型資訊(providerCode,modelCode)};
+    }
+    function 目前金鑰(providerCode){const el=document.getElementById(`金鑰-${providerCode}`);return el?el.value.trim():""}
+    function 建立金鑰欄位(){
+      const box=document.getElementById("金鑰區");
+      box.innerHTML=(AI服務設定.供應商||[]).map(p=>`
+        <div class="field 金鑰群組" data-provider="${安全文字(p.代碼)}" style="display:none">
+          <label for="金鑰-${安全文字(p.代碼)}">${安全文字(p.金鑰標籤||"API 金鑰")}</label>
+          <div class="key-row">
+            <input id="金鑰-${安全文字(p.代碼)}" type="password" autocomplete="new-password" autocapitalize="off" spellcheck="false" placeholder="${安全文字(p.金鑰提示||"貼上金鑰")}">
+            <button class="small-button" type="button" data-toggle-key="${安全文字(p.代碼)}">顯示</button>
+          </div>
+          <div class="key-hint">${安全文字(p.現況||"")}${p.金鑰網址?` ・ <a href="${p.金鑰網址}" target="_blank" rel="noopener">申請金鑰 →</a>`:""}</div>
+        </div>`).join("");
+      box.querySelectorAll("[data-toggle-key]").forEach(btn=>btn.addEventListener("click",event=>{const input=document.getElementById(`金鑰-${btn.dataset.toggleKey}`),show=input.type==="password";input.type=show?"text":"password";event.currentTarget.textContent=show?"隱藏":"顯示"}));
+    }
+    function 顯示對應金鑰欄位(providerCode){document.querySelectorAll(".金鑰群組").forEach(el=>{el.style.display=el.dataset.provider===providerCode?"grid":"none"})}
+    async function 載入AI設定(){
+      try{
+        const response=await fetch("系統設定/AI服務設定.json",{cache:"no-store"});
+        if(!response.ok)throw new Error("找不到 AI 服務設定");
+        AI服務設定=await response.json();
+        const select=document.getElementById("選擇模型");
+        select.innerHTML=(AI服務設定.供應商||[]).map(p=>`<optgroup label="${安全文字(p.名稱)}">${(p.模型||[]).map(m=>`<option value="${安全文字(p.代碼)}:${安全文字(m.代碼)}">${安全文字(m.名稱)}</option>`).join("")}</optgroup>`).join("");
+        建立金鑰欄位();
+        if(select.value)顯示對應金鑰欄位(select.value.split(":")[0]);
+        更新花費顯示();
+        更新代理介面();
+      }catch(error){document.getElementById("服務狀態").textContent="AI 服務設定檔載入失敗"}
+    }
+
+    function 預設位置(index){const mobile=window.innerWidth<760;if(mobile)return {x:18,y:22+index*185};return {x:22+(index%3)*260,y:28+Math.floor(index/3)*190}}
+    function 位置資料(agent,index){if(window.innerWidth<760)return 預設位置(index);try{const saved=JSON.parse(localStorage.getItem(`代理位置-${agent.名稱}`));if(saved&&Number.isFinite(saved.x)&&Number.isFinite(saved.y))return saved}catch(e){}const p=agent.位置||預設位置(index);return {x:Number(p.x)||0,y:Number(p.y)||0}}
     function 更新摘要(){
       const 代理=取得代理(),平均=代理.length?Math.round(代理.reduce((sum,a)=>sum+進度數字(a.完成進度),0)/代理.length):0;
       document.getElementById("全部代理").textContent=代理.length;
       document.getElementById("工作中").textContent=代理.filter(a=>狀態文字(a.狀態).includes("工作")).length;
       document.getElementById("平均進度").textContent=`${平均}%`;
-      document.getElementById("知識文件").textContent=文件.length;
+      更新花費顯示();
     }
-    function 預設位置(index){const mobile=window.innerWidth<760;if(mobile)return {x:18,y:22+index*185};return {x:22+(index%3)*260,y:28+Math.floor(index/3)*190}}
-    function 位置資料(agent,index){if(window.innerWidth<760)return 預設位置(index);try{const saved=JSON.parse(localStorage.getItem(`代理位置-${agent.名稱}`));if(saved&&Number.isFinite(saved.x)&&Number.isFinite(saved.y))return saved}catch(e){}const p=agent.位置||預設位置(index);return {x:Number(p.x)||0,y:Number(p.y)||0}}
     function 顯示畫布(filter=""){
       const 區=document.getElementById("代理節點區"),代理=取得代理().filter(a=>`${a.名稱}${a.角色}${a.任務}`.toLowerCase().includes(filter.toLowerCase()));
       區.innerHTML=代理.length?代理.map((a,i)=>{const p=位置資料(a,i),status=狀態文字(a.狀態),progress=進度數字(a.完成進度);return `<article class="agent-node" data-name="${安全文字(a.名稱)}" style="left:${p.x}px;top:${p.y}px"><div class="agent-top"><div class="agent-icon">${安全文字(a.圖示||"🤖")}</div><span class="status-pill" style="color:${狀態顏色(status)}">● ${安全文字(status)}</span></div><h3>${安全文字(a.名稱)}</h3><div class="role">${安全文字(a.角色)}</div><div class="task">${安全文字(a.任務)}</div><div class="progress-row"><div class="progress-track"><div class="progress-fill" style="width:${progress}%"></div></div><span class="progress-label">${progress}%</span></div><button class="agent-open" type="button" data-agent="${安全文字(a.名稱)}">查看並交付任務 →</button></article>`}).join(""):'<div class="empty">找不到符合的代理</div>';
@@ -188,19 +266,23 @@
     const 目前代理 = () => 取得代理().find(a=>a.名稱===document.getElementById("選擇代理").value)||取得代理()[0];
     const 取得代理記憶 = name => {if(!代理記憶.has(name))代理記憶.set(name,[]);return 代理記憶.get(name)};
     function 顯示代理選單(){const select=document.getElementById("選擇代理"),current=select.value;select.innerHTML=取得代理().map(a=>`<option value="${安全文字(a.名稱)}">${安全文字(a.圖示||"🤖")} ${安全文字(a.名稱)}・${安全文字(a.角色)}</option>`).join("");if(取得代理().some(a=>a.名稱===current))select.value=current;更新代理介面()}
-    function 更新代理介面(){const agent=目前代理();document.getElementById("對話標題").textContent=`與${agent?.名稱||"AI 代理"}對話`;if(agent?.模型&&[...document.getElementById("選擇模型").options].some(o=>o.value===agent.模型))document.getElementById("選擇模型").value=agent.模型;const tags=list=>(Array.isArray(list)?list:[]).map(item=>`<span class="profile-tag">${安全文字(item)}</span>`).join("");document.getElementById("代理檔案").innerHTML=agent?`<div class="profile-title"><span>${安全文字(agent.圖示||"🤖")}</span><div><b>${安全文字(agent.名稱)}</b><small>${安全文字(agent.模型||"尚未指定模型")}</small></div></div><div class="profile-item"><strong>核心目標</strong><span>${安全文字(agent.核心目標)}</span></div><div class="profile-item"><strong>人格</strong><span>${安全文字(agent.人格)}</span></div><div class="profile-item"><strong>專業</strong><div class="profile-tags">${tags(agent.專業)}</div></div><div class="profile-item"><strong>技能</strong><div class="profile-tags">${tags(agent.技能)}</div></div><div class="profile-item"><strong>可用工具</strong><div class="profile-tags">${tags(agent.可用工具)}</div></div>`:"尚無代理資料";顯示目前對話()}
-    function 顯示目前對話(){const agent=目前代理(),box=document.getElementById("對話內容"),memory=agent?取得代理記憶(agent.名稱):[];box.innerHTML=memory.length?"":'<div class="message system">這位代理尚無本次工作記憶。輸入任務後，代理會依自己的身分、技能與知識回答。</div>';for(const item of memory)加入訊息(item.角色==="使用者"?"user":"assistant",item.內容);box.scrollTop=box.scrollHeight}
+    function 更新代理介面(){
+      const agent=目前代理(),modelSelect=document.getElementById("選擇模型");
+      document.getElementById("對話標題").textContent=`與${agent?.名稱||"AI 代理"}對話`;
+      if(agent?.模型&&modelSelect){const match=[...modelSelect.options].find(o=>o.value.split(":")[1]===agent.模型);if(match)modelSelect.value=match.value}
+      if(modelSelect&&modelSelect.value)顯示對應金鑰欄位(modelSelect.value.split(":")[0]);
+      const tags=list=>(Array.isArray(list)?list:[]).map(item=>`<span class="profile-tag">${安全文字(item)}</span>`).join("");
+      document.getElementById("代理檔案").innerHTML=agent?`<div class="profile-title"><span>${安全文字(agent.圖示||"🤖")}</span><div><b>${安全文字(agent.名稱)}</b><small>預設模型：${安全文字(agent.模型||"尚未指定")}（可在上方改選其他供應商）</small></div></div><div class="profile-item"><strong>核心目標</strong><span>${安全文字(agent.核心目標)}</span></div><div class="profile-item"><strong>人格</strong><span>${安全文字(agent.人格)}</span></div><div class="profile-item"><strong>專業</strong><div class="profile-tags">${tags(agent.專業)}</div></div><div class="profile-item"><strong>技能</strong><div class="profile-tags">${tags(agent.技能)}</div></div><div class="profile-item"><strong>可用工具</strong><div class="profile-tags">${tags(agent.可用工具)}</div></div>`:"尚無代理資料";
+      顯示目前對話();
+    }
+    function 顯示目前對話(){const agent=目前代理(),box=document.getElementById("對話內容"),memory=agent?取得代理記憶(agent.名稱):[];box.innerHTML=memory.length?"":'<div class="message system">這位代理尚無本次工作記憶。輸入任務後，代理會依自己的身分、技能與知識回答。</div>';for(const item of memory)加入訊息(item.角色==="AI"?"assistant":"user",item.內容);box.scrollTop=box.scrollHeight}
     function 開啟代理(name){const select=document.getElementById("選擇代理");select.value=name;document.querySelectorAll(".nav-button,.view").forEach(el=>el.classList.remove("active"));document.querySelector('[data-view="AI工作台"]').classList.add("active");document.getElementById("AI工作台").classList.add("active");document.getElementById("頁面標題").textContent="AI工作台";document.getElementById("頁面說明").textContent="讓每位代理依自己的身分、技能、工具與記憶工作";更新代理介面()}
     function 加入訊息(role,text){const el=document.createElement("div");el.className=`message ${role}`;el.textContent=text;const box=document.getElementById("對話內容");box.appendChild(el);box.scrollTop=box.scrollHeight;return el}
-    async function 載入AI設定(){try{const response=await fetch("系統設定/AI服務設定.json",{cache:"no-store"});if(!response.ok)throw new Error("找不到 AI 服務設定");AI服務設定=await response.json();if(Array.isArray(AI服務設定.模型)&&AI服務設定.模型.length){document.getElementById("選擇模型").innerHTML=AI服務設定.模型.map(m=>`<option value="${安全文字(m.代碼)}">${安全文字(m.名稱)}</option>`).join("")}更新代理介面()}catch(error){document.getElementById("服務狀態").textContent="AI 服務設定檔載入失敗"}}
-    async function 讀取代理知識(agent){const paths=Array.isArray(agent?.知識文件)?agent.知識文件:[];const parts=[];for(const path of paths){try{if(!知識快取.has(path)){const response=await fetch(path,{cache:"no-store"});知識快取.set(path,response.ok?(await response.text()).slice(0,2500):"")}const content=知識快取.get(path);if(content)parts.push(`【${path}】\n${content}`)}catch(error){console.warn("無法讀取知識文件",path)}}return parts.join("\n\n").slice(0,5000)}
+
+    // ---------- 呼叫各供應商 API ----------
     function 取得Gemini文字(data){if(typeof data.output_text==="string")return data.output_text;const texts=[];for(const step of data.steps||[]){const contents=step?.output||step?.content||[];for(const item of Array.isArray(contents)?contents:[contents]){if(typeof item?.text==="string")texts.push(item.text)}}return texts.join("\n").trim()}
-    async function 呼叫AI({代理,模型,訊息,團隊模式=false}){
-      const apiKey=document.getElementById("Gemini金鑰").value.trim();
-      if(!apiKey)throw new Error("請先輸入 Gemini API 金鑰");
-      const knowledge=await 讀取代理知識(代理);
-      const input=訊息.slice(-10).map(item=>`${item.角色==="AI"?"AI":"使用者"}：${String(item.內容||"").slice(0,8000)}`).join("\n\n").slice(0,20000);
-      const system=[
+    function 建立系統提示(代理,團隊模式,knowledge){
+      return [
         `你是「${代理?.名稱||"AI代理"}」，不是通用聊天機器人。`,
         `角色：${代理?.角色||"協助使用者完成任務"}`,
         `人格：${代理?.人格||"務實、清楚"}`,
@@ -211,12 +293,14 @@
         "共同規則：使用繁體中文；先給結論；不可假裝已使用未提供的工具；區分事實、推論與未知；資料不足時明確提出。",
         團隊模式?"你正在多代理協作流程中。請專注自己的職責，閱讀上游交接，輸出本階段產出與給下一位代理的交接重點。":"你正在直接服務使用者，請保持自己的專業角色與工作方式。",
         `目前時間：${new Date().toLocaleString("zh-TW",{hour12:false})}`,
-        knowledge?`以下是你可以讀取的專屬知識庫：\n${knowledge}`:""
+        knowledge?`以下是你可以讀取的專屬知識庫（包含團隊共用的已知問題與規則）：\n${knowledge}`:""
       ].join("\n");
-      const requested=模型||代理?.模型||"gemini-3.8-flash";
-      const candidates=[requested,...(requested.includes("pro")?["gemini-3.8-flash","gemini-3.5-flash-lite"]:requested==="gemini-3.8-flash"?["gemini-3.5-flash-lite"]:[])].filter((item,index,list)=>list.indexOf(item)===index);
-      let lastStatus=0;
-      let lastDetail="";
+    }
+    async function 讀取代理知識(agent){const paths=Array.isArray(agent?.知識文件)?agent.知識文件:[];const parts=[];for(const path of paths){try{if(!知識快取.has(path)){const response=await fetch(path,{cache:"no-store"});知識快取.set(path,response.ok?(await response.text()).slice(0,2500):"")}const content=知識快取.get(path);if(content)parts.push(`【${path}】\n${content}`)}catch(error){console.warn("無法讀取知識文件",path)}}return parts.join("\n\n").slice(0,5000)}
+
+    async function 呼叫Gemini(apiKey,requestedModel,system,input,代理){
+      const candidates=[requestedModel,...(requestedModel.includes("pro")?["gemini-3.8-flash","gemini-3.5-flash-lite"]:requestedModel==="gemini-3.8-flash"?["gemini-3.5-flash-lite"]:[])].filter((item,index,list)=>list.indexOf(item)===index);
+      let lastStatus=0,lastDetail="";
       for(const candidate of candidates){
         const body={model:candidate,system_instruction:system,input,generation_config:{temperature:0.55}};
         if((代理?.可用工具||[]).includes("Google 搜尋"))body.tools=[{type:"google_search"}];
@@ -225,18 +309,60 @@
         if(response.ok){
           const answer=取得Gemini文字(data);
           if(!answer)throw new Error("Gemini 沒有傳回文字內容");
-          if(candidate!==requested)document.getElementById("服務狀態").textContent=`原模型額度不足，已自動改用 ${candidate}`;
-          return answer;
+          return {answer,usedModel:candidate,usage:null};
         }
-        lastStatus=response.status;
-        lastDetail=data?.error?.message||`Gemini API 錯誤 ${response.status}`;
+        lastStatus=response.status;lastDetail=data?.error?.message||`Gemini API 錯誤 ${response.status}`;
         if(response.status!==429)break;
       }
       if(lastStatus===429)throw new Error("目前可用的 Gemini 免費額度不足。請稍後再試，或到 Google AI Studio 查看專案額度。");
       throw new Error(lastDetail);
     }
+    async function 呼叫OpenAI(apiKey,model,system,messages){
+      const response=await fetch("https://api.openai.com/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${apiKey}`},body:JSON.stringify({model,messages:[{role:"system",content:system},...messages],temperature:0.6})});
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok)throw new Error(data?.error?.message||`OpenAI API 錯誤 ${response.status}`);
+      const answer=data?.choices?.[0]?.message?.content;
+      if(!answer)throw new Error("OpenAI 沒有傳回文字內容");
+      return {answer,usedModel:model,usage:data.usage?{input:data.usage.prompt_tokens,output:data.usage.completion_tokens}:null};
+    }
+    async function 呼叫Claude(apiKey,model,system,messages){
+      const response=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model,max_tokens:1500,system,messages})});
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok)throw new Error(data?.error?.message||`Claude API 錯誤 ${response.status}（若被瀏覽器攔截，代表這個環境不允許直接呼叫，需要改走伺服器端，見「多模型 API 串接說明」）`);
+      const block=(data.content||[]).find(item=>item?.type==="text");
+      if(!block?.text)throw new Error("Claude 沒有傳回文字內容");
+      return {answer:block.text,usedModel:model,usage:data.usage?{input:data.usage.input_tokens,output:data.usage.output_tokens}:null};
+    }
+    async function 呼叫AI({代理,providerCode,modelCode,訊息,團隊模式=false}){
+      const provider=取得供應商(providerCode),modelInfo=取得模型資訊(providerCode,modelCode);
+      const apiKey=目前金鑰(providerCode);
+      if(!apiKey)throw new Error(`請先輸入${provider?.金鑰標籤||"API 金鑰"}`);
+      const knowledge=await 讀取代理知識(代理);
+      const system=建立系統提示(代理,團隊模式,knowledge);
+      const history=訊息.slice(-10);
+      let result;
+      if(providerCode==="gemini"){
+        const input=history.map(item=>`${item.角色==="AI"?"AI":"使用者"}：${String(item.內容||"").slice(0,8000)}`).join("\n\n").slice(0,20000);
+        result=await 呼叫Gemini(apiKey,modelCode,system,input,代理);
+        result.inputTextForEstimate=system+input;
+      }else{
+        const messages=history.map(item=>({role:item.角色==="AI"?"assistant":"user",content:String(item.內容||"").slice(0,8000)}));
+        result=providerCode==="openai"?await 呼叫OpenAI(apiKey,modelCode,system,messages):await 呼叫Claude(apiKey,modelCode,system,messages);
+        result.inputTextForEstimate=system+messages.map(m=>m.content).join("\n");
+      }
+      const costUSD=result.usage?(result.usage.input/1e6*(modelInfo?.輸入價每百萬||0)+result.usage.output/1e6*(modelInfo?.輸出價每百萬||0)):估算成本(result.inputTextForEstimate,result.answer,modelInfo);
+      return {answer:result.answer,usedModel:result.usedModel,costUSD};
+    }
     function 設定代理狀態(agent,status,task,progress){agent.狀態=status;agent.任務=task;agent.完成進度=progress;agent.最後更新=new Date().toLocaleString("zh-TW",{hour12:false});全部重繪()}
-    async function 測試AI服務(){const status=document.getElementById("服務狀態"),light=document.getElementById("服務狀態燈"),button=document.getElementById("測試AI"),agent=目前代理();try{status.textContent="正在測試…";button.disabled=true;await 呼叫AI({代理:agent,模型:document.getElementById("選擇模型").value,訊息:[{角色:"使用者",內容:"請只回答：連線正常"}]});status.textContent="Gemini API 連線正常，代理設定已載入";light.textContent="●";light.style.color="var(--green)"}catch(error){status.textContent=error.message;light.textContent="○";light.style.color=""}finally{button.disabled=false}}
+    async function 測試AI服務(){
+      const status=document.getElementById("服務狀態"),light=document.getElementById("服務狀態燈"),button=document.getElementById("測試AI"),agent=目前代理(),{providerCode,modelCode}=目前供應商與模型();
+      try{
+        status.textContent="正在測試…";button.disabled=true;
+        const {costUSD}=await 呼叫AI({代理:agent,providerCode,modelCode,訊息:[{角色:"使用者",內容:"請只回答：連線正常"}]});
+        累加本月花費(costUSD);
+        status.textContent=`連線正常，代理設定已載入（這次測試約 US$${costUSD.toFixed(5)}）`;light.textContent="●";light.style.color="var(--green)";
+      }catch(error){status.textContent=error.message;light.textContent="○";light.style.color=""}finally{button.disabled=false}
+    }
     async function 傳送AI訊息(event){
       event.preventDefault();
       if(團隊執行中)return;
@@ -246,19 +372,22 @@
       const agent=目前代理();
       if(!text||!agent)return;
       const memory=取得代理記憶(agent.名稱);
-      const model=document.getElementById("選擇模型").value;
+      const {providerCode,modelCode,modelInfo}=目前供應商與模型();
+      const preEstimate=估算成本(text,"x".repeat(Math.max(300,Math.min(3000,Math.round(text.length*1.3)))),modelInfo);
+      if(!超出預算確認(preEstimate))return;
       input.value="";
       button.disabled=true;
       加入訊息("user",text);
-      const waiting=加入訊息("assistant",`${agent.名稱}正在使用 ${model}、專屬技能與知識庫思考…`);
+      const waiting=加入訊息("assistant",`${agent.名稱}正在使用 ${modelCode}、專屬技能與知識庫思考…`);
       設定代理狀態(agent,"工作中",text.slice(0,40),30);
       try{
-        const answer=await 呼叫AI({代理:agent,模型:model,訊息:[...memory,{角色:"使用者",內容:text}]});
+        const {answer,costUSD}=await 呼叫AI({代理:agent,providerCode,modelCode,訊息:[...memory,{角色:"使用者",內容:text}]});
         waiting.textContent=answer;
+        累加本月花費(costUSD);
         memory.push({角色:"使用者",內容:text},{角色:"AI",內容:answer});
         if(memory.length>12)memory.splice(0,memory.length-12);
         設定代理狀態(agent,"已完成",`已完成：${text.slice(0,32)}`,100);
-        document.getElementById("服務狀態").textContent="Gemini API 連線正常";
+        document.getElementById("服務狀態").textContent=`連線正常（這則約花費 US$${costUSD.toFixed(5)}）`;
         document.getElementById("服務狀態燈").textContent="●";
         document.getElementById("服務狀態燈").style.color="var(--green)";
       }catch(error){
@@ -269,12 +398,87 @@
         input.focus();
       }
     }
-    async function 啟動全隊協作(){if(團隊執行中)return;const input=document.getElementById("使用者訊息"),task=input.value.trim(),teamButton=document.getElementById("啟動團隊"),sendButton=document.getElementById("傳送訊息");if(!task){document.getElementById("服務狀態").textContent="請先輸入要交給全隊的任務";input.focus();return}if(!document.getElementById("Gemini金鑰").value.trim()){document.getElementById("服務狀態").textContent="請先輸入 Gemini API 金鑰";return}團隊執行中=true;input.value="";teamButton.disabled=true;sendButton.disabled=true;document.getElementById("對話內容").innerHTML="";加入訊息("user",`【全隊共同任務】\n${task}`);let handoff="尚無上游交接，請從共同任務開始。";const order=Array.isArray(系統資料.團隊流程)?系統資料.團隊流程:取得代理().map(a=>a.名稱);try{for(let i=0;i<order.length;i++){const agent=取得代理().find(a=>a.名稱===order[i]);if(!agent)continue;設定代理狀態(agent,"工作中",`執行團隊任務第 ${i+1} 階段`,Math.round(i/order.length*100));const waiting=加入訊息("assistant",`${agent.圖示||"🤖"} ${agent.名稱}正在執行第 ${i+1}/${order.length} 階段…`);const prompt=`共同任務：\n${task}\n\n上游代理交接：\n${handoff.slice(-9000)}\n\n你是第 ${i+1} 階段「${agent.名稱}」。請只做符合你專業與核心目標的工作，輸出：一、本階段結論；二、具體產出；三、風險或未知；四、交給下一位代理的重點。`;const answer=await 呼叫AI({代理:agent,模型:agent.模型,訊息:[{角色:"使用者",內容:prompt}],團隊模式:true});waiting.textContent=`${agent.圖示||"🤖"} ${agent.名稱}\n\n${answer}`;const memory=取得代理記憶(agent.名稱);memory.push({角色:"使用者",內容:`【團隊任務】${task}`},{角色:"AI",內容:answer});if(memory.length>12)memory.splice(0,memory.length-12);handoff=answer;設定代理狀態(agent,"已完成",`已完成團隊任務第 ${i+1} 階段`,100)}加入訊息("system","六位代理已完成分工與交接。最後一則為文件代理整理的交付結果。");document.getElementById("服務狀態").textContent="全隊協作完成"}catch(error){加入訊息("system",`團隊流程暫停：${error.message}`);document.getElementById("服務狀態").textContent="全隊協作發生錯誤"}finally{團隊執行中=false;teamButton.disabled=false;sendButton.disabled=false;input.focus()}}
+
+    // ---------- 團隊分階段協作（可暫停、可略過品保） ----------
+    function 更新團隊按鈕(){
+      const teamButton=document.getElementById("啟動團隊"),stopButton=document.getElementById("停止團隊"),sendButton=document.getElementById("傳送訊息");
+      if(!團隊狀態){teamButton.textContent="啟動全隊";teamButton.disabled=false;stopButton.style.display="none";sendButton.disabled=false;return}
+      if(團隊狀態.paused){teamButton.textContent=`核准並繼續（第 ${團隊狀態.index+1}/${團隊狀態.order.length} 階段）`;teamButton.disabled=false}
+      else{teamButton.textContent=`執行中…（第 ${團隊狀態.index+1}/${團隊狀態.order.length} 階段）`;teamButton.disabled=true}
+      stopButton.style.display="inline-block";sendButton.disabled=true;
+    }
+    function 停止團隊(){if(!團隊狀態)return;加入訊息("system","已依你的操作停止團隊流程。已完成的階段結果仍保留在上方對話中。");團隊狀態=null;團隊執行中=false;更新團隊按鈕()}
+    async function 開始或繼續團隊(){
+      if(團隊狀態&&團隊狀態.paused){await 執行團隊下一階段();return}
+      if(團隊狀態)return;
+      const input=document.getElementById("使用者訊息"),task=input.value.trim();
+      if(!task){document.getElementById("服務狀態").textContent="請先輸入要交給全隊的任務";input.focus();return}
+      const {providerCode,modelCode,provider}=目前供應商與模型();
+      if(!目前金鑰(providerCode)){document.getElementById("服務狀態").textContent=`請先輸入${provider?.金鑰標籤||"API 金鑰"}`;return}
+      let order=Array.isArray(系統資料.團隊流程)?[...系統資料.團隊流程]:取得代理().map(a=>a.名稱);
+      if(document.getElementById("略過品保").checked)order=order.filter(name=>name!=="檢查代理");
+      團隊狀態={task,order,index:0,handoff:"尚無上游交接，請從共同任務開始。",paused:false,providerCode,modelCode};
+      團隊執行中=true;
+      input.value="";
+      document.getElementById("對話內容").innerHTML="";
+      加入訊息("user",`【全隊共同任務】\n${task}`);
+      if(document.getElementById("略過品保").checked)加入訊息("system","已依你的設定略過品保檢查這一階段。");
+      更新團隊按鈕();
+      await 執行團隊下一階段();
+    }
+    async function 執行團隊下一階段(){
+      const state=團隊狀態;
+      if(!state)return;
+      if(state.index>=state.order.length){
+        加入訊息("system","團隊已完成全部階段。最後一則為文件代理整理的交付結果（或依你的設定已略過品保）。");
+        document.getElementById("服務狀態").textContent="全隊協作完成";
+        團隊狀態=null;團隊執行中=false;更新團隊按鈕();
+        return;
+      }
+      state.paused=false;更新團隊按鈕();
+      const agent=取得代理().find(a=>a.名稱===state.order[state.index]);
+      if(!agent){state.index++;await 執行團隊下一階段();return}
+      const modelInfo=取得模型資訊(state.providerCode,state.modelCode);
+      const prompt=`共同任務：\n${state.task}\n\n上游代理交接：\n${state.handoff.slice(-9000)}\n\n你是第 ${state.index+1} 階段「${agent.名稱}」。請只做符合你專業與核心目標的工作，輸出：一、本階段結論；二、具體產出；三、風險或未知；四、交給下一位代理的重點。`;
+      const preEstimate=估算成本(prompt,"x".repeat(1200),modelInfo);
+      if(!超出預算確認(preEstimate)){停止團隊();return}
+      設定代理狀態(agent,"工作中",`執行團隊任務第 ${state.index+1} 階段`,Math.round(state.index/state.order.length*100));
+      const waiting=加入訊息("assistant",`${agent.圖示||"🤖"} ${agent.名稱}正在使用 ${state.modelCode} 執行第 ${state.index+1}/${state.order.length} 階段…`);
+      try{
+        const {answer,costUSD}=await 呼叫AI({代理:agent,providerCode:state.providerCode,modelCode:state.modelCode,訊息:[{角色:"使用者",內容:prompt}],團隊模式:true});
+        waiting.textContent=`${agent.圖示||"🤖"} ${agent.名稱}\n\n${answer}`;
+        const totalTWD=USD轉TWD(累加本月花費(costUSD));
+        加入訊息("system",`本階段預估花費：約 US$${costUSD.toFixed(4)}（約 NT$${(costUSD*((AI服務設定.匯率&&AI服務設定.匯率.USD轉TWD)||31.6)).toFixed(1)}）・本月累計：約 NT$${totalTWD.toFixed(0)} ／ 預算 NT$${讀取月預算TWD()}`);
+        const memory=取得代理記憶(agent.名稱);memory.push({角色:"使用者",內容:`【團隊任務】${state.task}`},{角色:"AI",內容:answer});if(memory.length>12)memory.splice(0,memory.length-12);
+        state.handoff=answer;state.index++;
+        設定代理狀態(agent,"已完成",`已完成團隊任務第 ${state.index} 階段`,100);
+        if(state.index>=state.order.length){await 執行團隊下一階段();return}
+        state.paused=true;
+        加入訊息("system",`已完成第 ${state.index}/${state.order.length} 階段。確認上面的結果沒問題後，按「核准並繼續」進入下一階段；不放心就按「停止」。`);
+        更新團隊按鈕();
+      }catch(error){
+        加入訊息("system",`團隊流程暫停：${error.message}`);
+        設定代理狀態(agent,"等待中","上一項任務發生錯誤",0);
+        document.getElementById("服務狀態").textContent="全隊協作發生錯誤";
+        團隊狀態=null;團隊執行中=false;更新團隊按鈕();
+      }
+    }
+
     document.querySelectorAll(".nav-button").forEach(button=>button.addEventListener("click",()=>{document.querySelectorAll(".nav-button,.view").forEach(el=>el.classList.remove("active"));button.classList.add("active");document.getElementById(button.dataset.view).classList.add("active");const 說明={團隊畫布:"即時查看代理狀態、任務與合作關係",AI工作台:"讓每位代理依自己的身分、技能、工具、知識與記憶工作",文件資料庫:"快速開啟團隊規則、知識與工作文件",任務進度:"依代理彙整目前任務與完成進度",工作紀錄:"查看所有代理最近一次更新"};document.getElementById("頁面標題").textContent=button.dataset.view;document.getElementById("頁面說明").textContent=說明[button.dataset.view];if(button.dataset.view==="團隊畫布")requestAnimationFrame(畫連線);if(button.dataset.view==="AI工作台")更新代理介面()}));
-    document.getElementById("測試AI").addEventListener("click",測試AI服務);document.getElementById("切換金鑰顯示").addEventListener("click",event=>{const input=document.getElementById("Gemini金鑰"),show=input.type==="password";input.type=show?"text":"password";event.currentTarget.textContent=show?"隱藏":"顯示";event.currentTarget.setAttribute("aria-pressed",String(show))});document.getElementById("Gemini金鑰").addEventListener("input",()=>{document.getElementById("服務狀態").textContent="金鑰已輸入，尚未測試";document.getElementById("服務狀態燈").textContent="○";document.getElementById("服務狀態燈").style.color=""});document.getElementById("對話表單").addEventListener("submit",傳送AI訊息);document.getElementById("啟動團隊").addEventListener("click",啟動全隊協作);document.getElementById("選擇代理").addEventListener("change",更新代理介面);document.getElementById("清除對話").addEventListener("click",()=>{const agent=目前代理();if(agent)代理記憶.set(agent.名稱,[]);顯示目前對話()});
+    document.getElementById("測試AI").addEventListener("click",測試AI服務);
+    document.getElementById("對話表單").addEventListener("submit",傳送AI訊息);
+    document.getElementById("啟動團隊").addEventListener("click",開始或繼續團隊);
+    document.getElementById("停止團隊").addEventListener("click",停止團隊);
+    document.getElementById("選擇代理").addEventListener("change",更新代理介面);
+    document.getElementById("選擇模型").addEventListener("change",()=>{const val=document.getElementById("選擇模型").value.split(":")[0];if(val)顯示對應金鑰欄位(val)});
+    document.getElementById("清除對話").addEventListener("click",()=>{const agent=目前代理();if(agent)代理記憶.set(agent.名稱,[]);顯示目前對話()});
+    document.getElementById("月預算").addEventListener("change",e=>設定月預算TWD(e.target.value));
+    document.getElementById("重設本月花費").addEventListener("click",()=>{if(confirm("確定要清除這個月的花費估算紀錄嗎？（不會影響供應商實際帳單）")){try{localStorage.removeItem(目前年月鍵())}catch(e){}更新花費顯示()}});
     document.getElementById("搜尋").addEventListener("input",e=>全部重繪(e.target.value.trim()));window.addEventListener("resize",()=>requestAnimationFrame(畫連線));
     fetch("系統設定/AI代理資料.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json()}).then(data=>{if(!Array.isArray(data.AI代理))throw new Error("資料格式錯誤");系統資料={...預設備援資料,...data};全部重繪();顯示代理選單()}).catch(error=>{console.warn("改用內建備援資料：",error);全部重繪();顯示代理選單()});
     載入AI設定();
+    更新花費顯示();
+    更新團隊按鈕();
   </script>
 </body>
 </html>

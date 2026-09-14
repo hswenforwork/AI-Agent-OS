@@ -1,5 +1,7 @@
 # Google Gemini API 串接說明
 
+> 2026-09-14 起，平台已支援多供應商（Gemini／OpenAI／Claude），完整說明請看 [多模型 API 串接說明](多模型API串接說明.md)。這份文件保留 Gemini 專屬的細節，內容仍然適用。
+
 ## 目前連線方式
 
 `GitHub Pages 瀏覽器 → Google Gemini API`
