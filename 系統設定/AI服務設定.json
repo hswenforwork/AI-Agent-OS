@@ -1,0 +1,9 @@
+{
+  "API網址": "",
+  "供應商": "Google Gemini",
+  "模型": [
+    {"名稱": "Gemini 3.8 Flash・快速", "代碼": "gemini-3.8-flash"},
+    {"名稱": "Gemini 3.5 Flash-Lite・省成本", "代碼": "gemini-3.5-flash-lite"},
+    {"名稱": "Gemini 3.1 Pro・高能力", "代碼": "gemini-3.1-pro-preview"}
+  ]
+}
