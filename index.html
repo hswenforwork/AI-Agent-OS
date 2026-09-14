@@ -103,7 +103,7 @@
             <div class="field"><label for="選擇模型">AI 模型</label><select id="選擇模型">
               <option value="gemini-3.8-flash">Gemini 3.8 Flash・快速</option>
               <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash-Lite・省成本</option>
-              <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro・高能力</option>
+              <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro・可能需要付費額度</option>
             </select></div>
             <div class="field"><label for="Gemini金鑰">Gemini API 金鑰</label><div class="key-row"><input id="Gemini金鑰" type="password" autocomplete="new-password" autocapitalize="off" spellcheck="false" placeholder="貼上 AIza 開頭的金鑰"><button class="small-button" id="切換金鑰顯示" type="button" aria-pressed="false">顯示</button></div></div>
             <button class="button" id="測試AI" type="button">測試連線（少量額度）</button>
@@ -193,9 +193,48 @@
     function 開啟代理(name){const select=document.getElementById("選擇代理");select.value=name;document.querySelectorAll(".nav-button,.view").forEach(el=>el.classList.remove("active"));document.querySelector('[data-view="AI工作台"]').classList.add("active");document.getElementById("AI工作台").classList.add("active");document.getElementById("頁面標題").textContent="AI工作台";document.getElementById("頁面說明").textContent="讓每位代理依自己的身分、技能、工具與記憶工作";更新代理介面()}
     function 加入訊息(role,text){const el=document.createElement("div");el.className=`message ${role}`;el.textContent=text;const box=document.getElementById("對話內容");box.appendChild(el);box.scrollTop=box.scrollHeight;return el}
     async function 載入AI設定(){try{const response=await fetch("系統設定/AI服務設定.json",{cache:"no-store"});if(!response.ok)throw new Error("找不到 AI 服務設定");AI服務設定=await response.json();if(Array.isArray(AI服務設定.模型)&&AI服務設定.模型.length){document.getElementById("選擇模型").innerHTML=AI服務設定.模型.map(m=>`<option value="${安全文字(m.代碼)}">${安全文字(m.名稱)}</option>`).join("")}更新代理介面()}catch(error){document.getElementById("服務狀態").textContent="AI 服務設定檔載入失敗"}}
-    async function 讀取代理知識(agent){const paths=Array.isArray(agent?.知識文件)?agent.知識文件:[];const parts=[];for(const path of paths){try{if(!知識快取.has(path)){const response=await fetch(path,{cache:"no-store"});知識快取.set(path,response.ok?(await response.text()).slice(0,6000):"")}const content=知識快取.get(path);if(content)parts.push(`【${path}】\n${content}`)}catch(error){console.warn("無法讀取知識文件",path)}}return parts.join("\n\n").slice(0,12000)}
+    async function 讀取代理知識(agent){const paths=Array.isArray(agent?.知識文件)?agent.知識文件:[];const parts=[];for(const path of paths){try{if(!知識快取.has(path)){const response=await fetch(path,{cache:"no-store"});知識快取.set(path,response.ok?(await response.text()).slice(0,2500):"")}const content=知識快取.get(path);if(content)parts.push(`【${path}】\n${content}`)}catch(error){console.warn("無法讀取知識文件",path)}}return parts.join("\n\n").slice(0,5000)}
     function 取得Gemini文字(data){if(typeof data.output_text==="string")return data.output_text;const texts=[];for(const step of data.steps||[]){const contents=step?.output||step?.content||[];for(const item of Array.isArray(contents)?contents:[contents]){if(typeof item?.text==="string")texts.push(item.text)}}return texts.join("\n").trim()}
-    async function 呼叫AI({代理,模型,訊息,團隊模式=false}){const apiKey=document.getElementById("Gemini金鑰").value.trim();if(!apiKey)throw new Error("請先輸入 Gemini API 金鑰");const knowledge=await 讀取代理知識(代理);const input=訊息.slice(-12).map(item=>`${item.角色==="AI"?"AI":"使用者"}：${String(item.內容||"").slice(0,12000)}`).join("\n\n").slice(0,30000);const system=[`你是「${代理?.名稱||"AI代理"}」，不是通用聊天機器人。`,`角色：${代理?.角色||"協助使用者完成任務"}`,`人格：${代理?.人格||"務實、清楚"}`,`核心目標：${代理?.核心目標||"完成使用者任務"}`,`專業：${(代理?.專業||[]).join("、")}`,`技能：${(代理?.技能||[]).join("、")}`,`可用工具：${(代理?.可用工具||[]).join("、")}`,"共同規則：使用繁體中文；先給結論；不可假裝已使用未提供的工具；區分事實、推論與未知；資料不足時明確提出。",團隊模式?"你正在多代理協作流程中。請專注自己的職責，閱讀上游交接，輸出本階段產出與給下一位代理的交接重點。":"你正在直接服務使用者，請保持自己的專業角色與工作方式。",`目前時間：${new Date().toLocaleString("zh-TW",{hour12:false})}`,knowledge?`以下是你可以讀取的專屬知識庫：\n${knowledge}`:""].join("\n");const body={model:模型||代理?.模型||"gemini-3.8-flash",system_instruction:system,input,generation_config:{temperature:0.55}};if((代理?.可用工具||[]).includes("Google 搜尋"))body.tools=[{type:"google_search"}];const response=await fetch("https://generativelanguage.googleapis.com/v1beta/interactions",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":apiKey},body:JSON.stringify(body)});const data=await response.json().catch(()=>({}));if(!response.ok){const detail=data?.error?.message||`Gemini API 錯誤 ${response.status}`;throw new Error(detail)}const answer=取得Gemini文字(data);if(!answer)throw new Error("Gemini 沒有傳回文字內容");return answer}
+    async function 呼叫AI({代理,模型,訊息,團隊模式=false}){
+      const apiKey=document.getElementById("Gemini金鑰").value.trim();
+      if(!apiKey)throw new Error("請先輸入 Gemini API 金鑰");
+      const knowledge=await 讀取代理知識(代理);
+      const input=訊息.slice(-10).map(item=>`${item.角色==="AI"?"AI":"使用者"}：${String(item.內容||"").slice(0,8000)}`).join("\n\n").slice(0,20000);
+      const system=[
+        `你是「${代理?.名稱||"AI代理"}」，不是通用聊天機器人。`,
+        `角色：${代理?.角色||"協助使用者完成任務"}`,
+        `人格：${代理?.人格||"務實、清楚"}`,
+        `核心目標：${代理?.核心目標||"完成使用者任務"}`,
+        `專業：${(代理?.專業||[]).join("、")}`,
+        `技能：${(代理?.技能||[]).join("、")}`,
+        `可用工具：${(代理?.可用工具||[]).join("、")}`,
+        "共同規則：使用繁體中文；先給結論；不可假裝已使用未提供的工具；區分事實、推論與未知；資料不足時明確提出。",
+        團隊模式?"你正在多代理協作流程中。請專注自己的職責，閱讀上游交接，輸出本階段產出與給下一位代理的交接重點。":"你正在直接服務使用者，請保持自己的專業角色與工作方式。",
+        `目前時間：${new Date().toLocaleString("zh-TW",{hour12:false})}`,
+        knowledge?`以下是你可以讀取的專屬知識庫：\n${knowledge}`:""
+      ].join("\n");
+      const requested=模型||代理?.模型||"gemini-3.8-flash";
+      const candidates=[requested,...(requested.includes("pro")?["gemini-3.8-flash","gemini-3.5-flash-lite"]:requested==="gemini-3.8-flash"?["gemini-3.5-flash-lite"]:[])].filter((item,index,list)=>list.indexOf(item)===index);
+      let lastStatus=0;
+      let lastDetail="";
+      for(const candidate of candidates){
+        const body={model:candidate,system_instruction:system,input,generation_config:{temperature:0.55}};
+        if((代理?.可用工具||[]).includes("Google 搜尋"))body.tools=[{type:"google_search"}];
+        const response=await fetch("https://generativelanguage.googleapis.com/v1beta/interactions",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":apiKey},body:JSON.stringify(body)});
+        const data=await response.json().catch(()=>({}));
+        if(response.ok){
+          const answer=取得Gemini文字(data);
+          if(!answer)throw new Error("Gemini 沒有傳回文字內容");
+          if(candidate!==requested)document.getElementById("服務狀態").textContent=`原模型額度不足，已自動改用 ${candidate}`;
+          return answer;
+        }
+        lastStatus=response.status;
+        lastDetail=data?.error?.message||`Gemini API 錯誤 ${response.status}`;
+        if(response.status!==429)break;
+      }
+      if(lastStatus===429)throw new Error("目前可用的 Gemini 免費額度不足。請稍後再試，或到 Google AI Studio 查看專案額度。");
+      throw new Error(lastDetail);
+    }
     function 設定代理狀態(agent,status,task,progress){agent.狀態=status;agent.任務=task;agent.完成進度=progress;agent.最後更新=new Date().toLocaleString("zh-TW",{hour12:false});全部重繪()}
     async function 測試AI服務(){const status=document.getElementById("服務狀態"),light=document.getElementById("服務狀態燈"),button=document.getElementById("測試AI"),agent=目前代理();try{status.textContent="正在測試…";button.disabled=true;await 呼叫AI({代理:agent,模型:document.getElementById("選擇模型").value,訊息:[{角色:"使用者",內容:"請只回答：連線正常"}]});status.textContent="Gemini API 連線正常，代理設定已載入";light.textContent="●";light.style.color="var(--green)"}catch(error){status.textContent=error.message;light.textContent="○";light.style.color=""}finally{button.disabled=false}}
     async function 傳送AI訊息(event){

@@ -20,6 +20,8 @@
 
 全隊協作大約呼叫六次 Gemini API，會使用相應額度。
 
+系統採用免費額度優先策略：團隊預設使用 Flash 或 Flash-Lite；如果選擇的 Pro 模型回覆 429 額度錯誤，會自動改用 Flash，再視需要改用 Flash-Lite。
+
 ## 代理工具
 
 - 知識庫讀取：讀取該代理設定的 GitHub Pages Markdown 文件。

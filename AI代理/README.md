@@ -6,10 +6,10 @@
 
 | 代理 | 主要責任 | 預設模型 |
 |---|---|---|
-| 團隊主管 | 理解目標、分工、整合決策 | Gemini 3.1 Pro Preview |
+| 團隊主管 | 理解目標、分工、整合決策 | Gemini 3.8 Flash |
 | 研究代理 | 搜尋、查證、整理證據 | Gemini 3.8 Flash |
 | 規劃代理 | 拆解工作、安排順序、定義驗收 | Gemini 3.8 Flash |
-| 開發代理 | 技術設計、程式實作、API 整合 | Gemini 3.1 Pro Preview |
+| 開發代理 | 技術設計、程式實作、API 整合 | Gemini 3.8 Flash |
 | 檢查代理 | 測試、安全、品質與需求驗收 | Gemini 3.8 Flash |
 | 文件代理 | 操作教學、成果與知識整理 | Gemini 3.5 Flash-Lite |
 
