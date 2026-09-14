@@ -198,7 +198,38 @@
     async function 呼叫AI({代理,模型,訊息,團隊模式=false}){const apiKey=document.getElementById("Gemini金鑰").value.trim();if(!apiKey)throw new Error("請先輸入 Gemini API 金鑰");const knowledge=await 讀取代理知識(代理);const input=訊息.slice(-12).map(item=>`${item.角色==="AI"?"AI":"使用者"}：${String(item.內容||"").slice(0,12000)}`).join("\n\n").slice(0,30000);const system=[`你是「${代理?.名稱||"AI代理"}」，不是通用聊天機器人。`,`角色：${代理?.角色||"協助使用者完成任務"}`,`人格：${代理?.人格||"務實、清楚"}`,`核心目標：${代理?.核心目標||"完成使用者任務"}`,`專業：${(代理?.專業||[]).join("、")}`,`技能：${(代理?.技能||[]).join("、")}`,`可用工具：${(代理?.可用工具||[]).join("、")}`,"共同規則：使用繁體中文；先給結論；不可假裝已使用未提供的工具；區分事實、推論與未知；資料不足時明確提出。",團隊模式?"你正在多代理協作流程中。請專注自己的職責，閱讀上游交接，輸出本階段產出與給下一位代理的交接重點。":"你正在直接服務使用者，請保持自己的專業角色與工作方式。",`目前時間：${new Date().toLocaleString("zh-TW",{hour12:false})}`,knowledge?`以下是你可以讀取的專屬知識庫：\n${knowledge}`:""].join("\n");const body={model:模型||代理?.模型||"gemini-3.8-flash",system_instruction:system,input,generation_config:{temperature:0.55}};if((代理?.可用工具||[]).includes("Google 搜尋"))body.tools=[{type:"google_search"}];const response=await fetch("https://generativelanguage.googleapis.com/v1beta/interactions",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":apiKey},body:JSON.stringify(body)});const data=await response.json().catch(()=>({}));if(!response.ok){const detail=data?.error?.message||`Gemini API 錯誤 ${response.status}`;throw new Error(detail)}const answer=取得Gemini文字(data);if(!answer)throw new Error("Gemini 沒有傳回文字內容");return answer}
     function 設定代理狀態(agent,status,task,progress){agent.狀態=status;agent.任務=task;agent.完成進度=progress;agent.最後更新=new Date().toLocaleString("zh-TW",{hour12:false});全部重繪()}
     async function 測試AI服務(){const status=document.getElementById("服務狀態"),light=document.getElementById("服務狀態燈"),button=document.getElementById("測試AI"),agent=目前代理();try{status.textContent="正在測試…";button.disabled=true;await 呼叫AI({代理:agent,模型:document.getElementById("選擇模型").value,訊息:[{角色:"使用者",內容:"請只回答：連線正常"}]});status.textContent="Gemini API 連線正常，代理設定已載入";light.textContent="●";light.style.color="var(--green)"}catch(error){status.textContent=error.message;light.textContent="○";light.style.color=""}finally{button.disabled=false}}
-    async function 傳送AI訊息(event){event.preventDefault();if(團隊執行中)return;const input=document.getElementById("使用者訊息"),button=document.getElementById("傳送訊息"),text=input.value.trim(),agent=目前代理();if(!text||!agent)return;const memory=取得代理記憶(agent.名稱),model=document.getElementById("選擇模型").value;input.value="";button.disabled=true;加入訊息("user",text);const waiting=加入訊息("assistant",`${agent.名稱}正在使用 ${model}、專屬技能與知識庫思考…`);設定代理狀態(agent,"工作中",text.slice(0,40),30);try{const answer=await 呼叫AI({代理:agent,模型,訊息:[...memory,{角色:"使用者",內容:text}]});waiting.textContent=answer;memory.push({角色:"使用者",內容:text},{角色:"AI",內容:answer});if(memory.length>12)memory.splice(0,memory.length-12);設定代理狀態(agent,"已完成",`已完成：${text.slice(0,32)}`,100);document.getElementById("服務狀態").textContent="Gemini API 連線正常";document.getElementById("服務狀態燈").textContent="●";document.getElementById("服務狀態燈").style.color="var(--green)"}catch(error){waiting.textContent=`無法取得回覆：${error.message}`;設定代理狀態(agent,"等待中","上一項任務發生錯誤",0)}finally{button.disabled=false;input.focus()}}
+    async function 傳送AI訊息(event){
+      event.preventDefault();
+      if(團隊執行中)return;
+      const input=document.getElementById("使用者訊息");
+      const button=document.getElementById("傳送訊息");
+      const text=input.value.trim();
+      const agent=目前代理();
+      if(!text||!agent)return;
+      const memory=取得代理記憶(agent.名稱);
+      const model=document.getElementById("選擇模型").value;
+      input.value="";
+      button.disabled=true;
+      加入訊息("user",text);
+      const waiting=加入訊息("assistant",`${agent.名稱}正在使用 ${model}、專屬技能與知識庫思考…`);
+      設定代理狀態(agent,"工作中",text.slice(0,40),30);
+      try{
+        const answer=await 呼叫AI({代理:agent,模型:model,訊息:[...memory,{角色:"使用者",內容:text}]});
+        waiting.textContent=answer;
+        memory.push({角色:"使用者",內容:text},{角色:"AI",內容:answer});
+        if(memory.length>12)memory.splice(0,memory.length-12);
+        設定代理狀態(agent,"已完成",`已完成：${text.slice(0,32)}`,100);
+        document.getElementById("服務狀態").textContent="Gemini API 連線正常";
+        document.getElementById("服務狀態燈").textContent="●";
+        document.getElementById("服務狀態燈").style.color="var(--green)";
+      }catch(error){
+        waiting.textContent=`無法取得回覆：${error.message}`;
+        設定代理狀態(agent,"等待中","上一項任務發生錯誤",0);
+      }finally{
+        button.disabled=false;
+        input.focus();
+      }
+    }
     async function 啟動全隊協作(){if(團隊執行中)return;const input=document.getElementById("使用者訊息"),task=input.value.trim(),teamButton=document.getElementById("啟動團隊"),sendButton=document.getElementById("傳送訊息");if(!task){document.getElementById("服務狀態").textContent="請先輸入要交給全隊的任務";input.focus();return}if(!document.getElementById("Gemini金鑰").value.trim()){document.getElementById("服務狀態").textContent="請先輸入 Gemini API 金鑰";return}團隊執行中=true;input.value="";teamButton.disabled=true;sendButton.disabled=true;document.getElementById("對話內容").innerHTML="";加入訊息("user",`【全隊共同任務】\n${task}`);let handoff="尚無上游交接，請從共同任務開始。";const order=Array.isArray(系統資料.團隊流程)?系統資料.團隊流程:取得代理().map(a=>a.名稱);try{for(let i=0;i<order.length;i++){const agent=取得代理().find(a=>a.名稱===order[i]);if(!agent)continue;設定代理狀態(agent,"工作中",`執行團隊任務第 ${i+1} 階段`,Math.round(i/order.length*100));const waiting=加入訊息("assistant",`${agent.圖示||"🤖"} ${agent.名稱}正在執行第 ${i+1}/${order.length} 階段…`);const prompt=`共同任務：\n${task}\n\n上游代理交接：\n${handoff.slice(-9000)}\n\n你是第 ${i+1} 階段「${agent.名稱}」。請只做符合你專業與核心目標的工作，輸出：一、本階段結論；二、具體產出；三、風險或未知；四、交給下一位代理的重點。`;const answer=await 呼叫AI({代理:agent,模型:agent.模型,訊息:[{角色:"使用者",內容:prompt}],團隊模式:true});waiting.textContent=`${agent.圖示||"🤖"} ${agent.名稱}\n\n${answer}`;const memory=取得代理記憶(agent.名稱);memory.push({角色:"使用者",內容:`【團隊任務】${task}`},{角色:"AI",內容:answer});if(memory.length>12)memory.splice(0,memory.length-12);handoff=answer;設定代理狀態(agent,"已完成",`已完成團隊任務第 ${i+1} 階段`,100)}加入訊息("system","六位代理已完成分工與交接。最後一則為文件代理整理的交付結果。");document.getElementById("服務狀態").textContent="全隊協作完成"}catch(error){加入訊息("system",`團隊流程暫停：${error.message}`);document.getElementById("服務狀態").textContent="全隊協作發生錯誤"}finally{團隊執行中=false;teamButton.disabled=false;sendButton.disabled=false;input.focus()}}
     document.querySelectorAll(".nav-button").forEach(button=>button.addEventListener("click",()=>{document.querySelectorAll(".nav-button,.view").forEach(el=>el.classList.remove("active"));button.classList.add("active");document.getElementById(button.dataset.view).classList.add("active");const 說明={團隊畫布:"即時查看代理狀態、任務與合作關係",AI工作台:"讓每位代理依自己的身分、技能、工具、知識與記憶工作",文件資料庫:"快速開啟團隊規則、知識與工作文件",任務進度:"依代理彙整目前任務與完成進度",工作紀錄:"查看所有代理最近一次更新"};document.getElementById("頁面標題").textContent=button.dataset.view;document.getElementById("頁面說明").textContent=說明[button.dataset.view];if(button.dataset.view==="團隊畫布")requestAnimationFrame(畫連線);if(button.dataset.view==="AI工作台")更新代理介面()}));
     document.getElementById("測試AI").addEventListener("click",測試AI服務);document.getElementById("切換金鑰顯示").addEventListener("click",event=>{const input=document.getElementById("Gemini金鑰"),show=input.type==="password";input.type=show?"text":"password";event.currentTarget.textContent=show?"隱藏":"顯示";event.currentTarget.setAttribute("aria-pressed",String(show))});document.getElementById("Gemini金鑰").addEventListener("input",()=>{document.getElementById("服務狀態").textContent="金鑰已輸入，尚未測試";document.getElementById("服務狀態燈").textContent="○";document.getElementById("服務狀態燈").style.color=""});document.getElementById("對話表單").addEventListener("submit",傳送AI訊息);document.getElementById("啟動團隊").addEventListener("click",啟動全隊協作);document.getElementById("選擇代理").addEventListener("change",更新代理介面);document.getElementById("清除對話").addEventListener("click",()=>{const agent=目前代理();if(agent)代理記憶.set(agent.名稱,[]);顯示目前對話()});
