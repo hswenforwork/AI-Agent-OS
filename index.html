@@ -403,7 +403,7 @@
     function 更新團隊按鈕(){
       const teamButton=document.getElementById("啟動團隊"),stopButton=document.getElementById("停止團隊"),sendButton=document.getElementById("傳送訊息");
       if(!團隊狀態){teamButton.textContent="啟動全隊";teamButton.disabled=false;stopButton.style.display="none";sendButton.disabled=false;return}
-      if(團隊狀態.paused){teamButton.textContent=`核准並繼續（第 ${團隊狀態.index+1}/${團隊狀態.order.length} 階段）`;teamButton.disabled=false}
+      if(團隊狀態.paused){teamButton.textContent=團隊狀態.failed?`重試第 ${團隊狀態.index+1}/${團隊狀態.order.length} 階段（可先在左側切換模型或金鑰）`:`核准並繼續（第 ${團隊狀態.index+1}/${團隊狀態.order.length} 階段）`;teamButton.disabled=false}
       else{teamButton.textContent=`執行中…（第 ${團隊狀態.index+1}/${團隊狀態.order.length} 階段）`;teamButton.disabled=true}
       stopButton.style.display="inline-block";sendButton.disabled=true;
     }
@@ -417,7 +417,7 @@
       if(!目前金鑰(providerCode)){document.getElementById("服務狀態").textContent=`請先輸入${provider?.金鑰標籤||"API 金鑰"}`;return}
       let order=Array.isArray(系統資料.團隊流程)?[...系統資料.團隊流程]:取得代理().map(a=>a.名稱);
       if(document.getElementById("略過品保").checked)order=order.filter(name=>name!=="檢查代理");
-      團隊狀態={task,order,index:0,handoff:"尚無上游交接，請從共同任務開始。",paused:false,providerCode,modelCode};
+      團隊狀態={task,order,index:0,handoff:"尚無上游交接，請從共同任務開始。",paused:false,failed:false};
       團隊執行中=true;
       input.value="";
       document.getElementById("對話內容").innerHTML="";
@@ -435,17 +435,22 @@
         團隊狀態=null;團隊執行中=false;更新團隊按鈕();
         return;
       }
-      state.paused=false;更新團隊按鈕();
+      const {providerCode,modelCode,provider,modelInfo}=目前供應商與模型();
+      if(!目前金鑰(providerCode)){
+        加入訊息("system",`請先在左側貼上${provider?.金鑰標籤||"API 金鑰"}，再按下方按鈕重試這一階段。`);
+        state.paused=true;state.failed=true;更新團隊按鈕();
+        return;
+      }
+      state.paused=false;state.failed=false;更新團隊按鈕();
       const agent=取得代理().find(a=>a.名稱===state.order[state.index]);
       if(!agent){state.index++;await 執行團隊下一階段();return}
-      const modelInfo=取得模型資訊(state.providerCode,state.modelCode);
       const prompt=`共同任務：\n${state.task}\n\n上游代理交接：\n${state.handoff.slice(-9000)}\n\n你是第 ${state.index+1} 階段「${agent.名稱}」。請只做符合你專業與核心目標的工作，輸出：一、本階段結論；二、具體產出；三、風險或未知；四、交給下一位代理的重點。`;
       const preEstimate=估算成本(prompt,"x".repeat(1200),modelInfo);
       if(!超出預算確認(preEstimate)){停止團隊();return}
       設定代理狀態(agent,"工作中",`執行團隊任務第 ${state.index+1} 階段`,Math.round(state.index/state.order.length*100));
-      const waiting=加入訊息("assistant",`${agent.圖示||"🤖"} ${agent.名稱}正在使用 ${state.modelCode} 執行第 ${state.index+1}/${state.order.length} 階段…`);
+      const waiting=加入訊息("assistant",`${agent.圖示||"🤖"} ${agent.名稱}正在使用 ${modelCode} 執行第 ${state.index+1}/${state.order.length} 階段…`);
       try{
-        const {answer,costUSD}=await 呼叫AI({代理:agent,providerCode:state.providerCode,modelCode:state.modelCode,訊息:[{角色:"使用者",內容:prompt}],團隊模式:true});
+        const {answer,costUSD}=await 呼叫AI({代理:agent,providerCode,modelCode,訊息:[{角色:"使用者",內容:prompt}],團隊模式:true});
         waiting.textContent=`${agent.圖示||"🤖"} ${agent.名稱}\n\n${answer}`;
         const totalTWD=USD轉TWD(累加本月花費(costUSD));
         加入訊息("system",`本階段預估花費：約 US$${costUSD.toFixed(4)}（約 NT$${(costUSD*((AI服務設定.匯率&&AI服務設定.匯率.USD轉TWD)||31.6)).toFixed(1)}）・本月累計：約 NT$${totalTWD.toFixed(0)} ／ 預算 NT$${讀取月預算TWD()}`);
@@ -453,14 +458,15 @@
         state.handoff=answer;state.index++;
         設定代理狀態(agent,"已完成",`已完成團隊任務第 ${state.index} 階段`,100);
         if(state.index>=state.order.length){await 執行團隊下一階段();return}
-        state.paused=true;
+        state.paused=true;state.failed=false;
         加入訊息("system",`已完成第 ${state.index}/${state.order.length} 階段。確認上面的結果沒問題後，按「核准並繼續」進入下一階段；不放心就按「停止」。`);
         更新團隊按鈕();
       }catch(error){
-        加入訊息("system",`團隊流程暫停：${error.message}`);
-        設定代理狀態(agent,"等待中","上一項任務發生錯誤",0);
-        document.getElementById("服務狀態").textContent="全隊協作發生錯誤";
-        團隊狀態=null;團隊執行中=false;更新團隊按鈕();
+        加入訊息("system",`第 ${state.index+1} 階段發生錯誤，已暫停（不會遺失前面已完成的階段）：${error.message}\n可以先到左側切換供應商／模型或稍後再試，再按下方按鈕重試這一階段；不想繼續就按「停止」。`);
+        設定代理狀態(agent,"等待中","上一項任務發生錯誤，等待重試",0);
+        document.getElementById("服務狀態").textContent="這一階段發生錯誤，已暫停等待重試";
+        state.paused=true;state.failed=true;
+        更新團隊按鈕();
       }
     }
 
