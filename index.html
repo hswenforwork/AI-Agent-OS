@@ -300,8 +300,15 @@
 
     const 可重試狀態 = new Set([429,500,502,503,504]);
     const 延遲 = ms => new Promise(resolve=>setTimeout(resolve,ms));
+    const GEMINI免費模型 = ["gemini-3.8-flash","gemini-3.5-flash-lite"];
+    function 取得Gemini候選模型(requestedModel){
+      // 兩個免費模型（3.8 Flash／3.5 Flash-Lite）在 Google 那邊各自有獨立的免費額度，
+      // 其中一個額度用完不代表另一個也用完，所以互為備援；Pro 額度不足時才降級到免費模型。
+      const others = requestedModel.includes("pro") ? GEMINI免費模型 : GEMINI免費模型.filter(m=>m!==requestedModel);
+      return [requestedModel,...others].filter((item,index,list)=>list.indexOf(item)===index);
+    }
     async function 呼叫Gemini(apiKey,requestedModel,system,input,代理){
-      const candidates=[requestedModel,...(requestedModel.includes("pro")?["gemini-3.8-flash","gemini-3.5-flash-lite"]:requestedModel==="gemini-3.8-flash"?["gemini-3.5-flash-lite"]:[])].filter((item,index,list)=>list.indexOf(item)===index);
+      const candidates=取得Gemini候選模型(requestedModel);
       let lastStatus=0,lastDetail="";
       for(const candidate of candidates){
         for(let attempt=0;attempt<2;attempt++){
@@ -320,7 +327,7 @@
         }
         if(!可重試狀態.has(lastStatus))break;
       }
-      if(lastStatus===429)throw new Error("目前可用的 Gemini 免費額度不足。請稍後再試，或到 Google AI Studio 查看專案額度。");
+      if(lastStatus===429)throw new Error("Gemini 免費額度目前不足（已經試過 3.8 Flash 與 3.5 Flash-Lite 兩個免費模型都一樣）。Google 的免費額度大多是「每分鐘」限制，通常等 1～2 分鐘再按重試就會恢復；如果隔了一段時間還是不行，可能是「每日」額度用完，要等隔天重置，或到 Google AI Studio 查看實際額度、改選 Gemini 3.1 Pro（可能需要付費額度）或其他供應商。");
       if([500,502,503,504].includes(lastStatus))throw new Error(`Google Gemini 服務目前忙碌或不穩定（狀態碼 ${lastStatus}）：${lastDetail}。這通常跟你的額度無關，等一下常會自動恢復，可以直接按「重試這一階段」，或改選其他供應商／模型。`);
       throw new Error(lastDetail);
     }
