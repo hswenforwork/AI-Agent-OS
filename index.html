@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 
 <html>
-
 <head>
 
 <meta charset="UTF-8">
@@ -78,7 +77,75 @@ font-size:20px;
 
 </div>
 
+<script>
 
+fetch("系統設定/AI代理資料.json")
+
+.then(response => response.json())
+
+.then(data => {
+
+
+let agents = data.AI代理;
+
+
+let html = "";
+
+
+agents.forEach(agent => {
+
+
+html += `
+
+<div class="agent">
+
+<h2>
+🤖 ${agent.名稱}
+</h2>
+
+
+<p>
+角色：
+
+${agent.角色}
+
+</p>
+
+
+<p>
+
+狀態：
+
+${agent.狀態}
+
+</p>
+
+
+<p>
+
+目前任務：
+
+${agent.任務}
+
+</p>
+
+
+</div>
+
+
+`;
+
+
+});
+
+
+document.getElementById("agent-list").innerHTML = html;
+
+
+});
+
+
+</script>
 
 </body>
 
