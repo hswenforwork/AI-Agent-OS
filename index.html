@@ -360,11 +360,20 @@
         if(!可重試狀態.has(lastStatus))break;
       }
       if(lastStatus===429){
-        if(lastDiagnosis?.period==="day"){
-          throw new Error(`Gemini 免費額度用完的是「每日」上限（模型：${lastCandidate}），不是流量太快，現在重試不會有用，通常要等 Google 那邊隔天重置。這跟 Google AI Studio 用量儀表板看到的「總用量」是兩回事——免費層的每日請求數上限可能遠比儀表板數字給人的印象低，儀表板顯示用量很少不代表沒有打到上限。可以改選 Gemini 3.1 Pro（可能需要付費額度）或其他供應商，或等隔天再試。`);
+        // 重要：不要再對 429 自動假設「就是額度問題」。上一版就是這樣假設才出錯——
+        // 使用者實測 Google AI Studio 的配額頁面（RPM／TPM／RPD 都遠有餘裕），證明至少
+        // 這次的 429 不是真的撞到 Gemini 官方配額。可能原因包括：金鑰本身被拒絕（例如
+        // referrer 限制、金鑰不屬於這個專案、金鑰打錯或已被撤銷）、Google 對瀏覽器直接呼叫
+        // 另外套用的防濫用節流（跟配額頁面顯示的官方額度是不同機制，不會反映在那個頁面上）、
+        // 或其他原因——所以一律把 Google 實際回傳的原始訊息（lastDetail）完整附在錯誤裡，
+        // 不再只顯示我們自己猜測的「額度不足」／「請求過於頻繁」這種固定文案，讓使用者跟之後
+        // 除錯的人都能看到 Google 真正說了什麼，而不是被我們的猜測擋住看不到真相。
+        if(lastDiagnosis?.period==="day"||lastDiagnosis?.period==="minute"){
+          const 類型=lastDiagnosis.period==="day"?"每日":"每分鐘";
+          const 等待說明=lastDiagnosis?.retrySeconds?`Google 建議等約 ${lastDiagnosis.retrySeconds} 秒再試`:(lastDiagnosis.period==="day"?"通常要等隔天重置":"通常等 1～2 分鐘再試");
+          throw new Error(`Gemini 回傳 429，Google 的錯誤內容裡明確標示是「${類型}」額度限制（quotaId：${lastDiagnosis.quotaId}）。${等待說明}。如果你在 Google AI Studio 的配額頁面看這個額度還有很多空間、跟這個判斷矛盾，代表可能是別的原因（金鑰、專案不對，或防濫用節流），請把這整段訊息回報，附上配額頁面截圖，我才能繼續往下查。Google 原始訊息：${lastDetail}`);
         }
-        const 等待說明=lastDiagnosis?.retrySeconds?`Google 這次回應建議等約 ${lastDiagnosis.retrySeconds} 秒`:`免費額度的請求限制多為「每分鐘」計算，通常等 1～2 分鐘`;
-        throw new Error(`Gemini 免費額度目前請求過於頻繁（已經試過 3.8 Flash 與 3.5 Flash-Lite 兩個免費模型都一樣，狀態碼 429）。${等待說明}再試就會恢復——這種情況下 Google AI Studio 的用量儀表板本來就會顯示很低，因為限制的是「短時間內的請求數」而不是總用量，兩者不衝突。如果隔了比較久（超過幾分鐘）還是不行，才可能是「每日」額度用完，要等隔天重置，或到 Google AI Studio 查看實際額度、改選 Gemini 3.1 Pro（可能需要付費額度）或其他供應商。`);
+        throw new Error(`Gemini 回傳 429（已經試過 3.8 Flash 與 3.5 Flash-Lite 兩個免費模型都一樣），但 Google 這次的回應裡沒有附上可以判斷是「額度」還是其他原因的結構化資訊，所以不能假設一定是額度問題——如果你在 Google AI Studio 配額頁面看到這個模型的 RPM／TPM／RPD 都還有很多空間，很可能不是真的額度用完，比較可能是金鑰本身的問題（打錯、屬於別的專案、被撤銷或有 referrer 限制擋住瀏覽器直接呼叫）或 Google 對瀏覽器直接呼叫另外套用的防濫用節流（不會顯示在配額頁面上）。Google 原始訊息：${lastDetail}`);
       }
       if([500,502,503,504].includes(lastStatus))throw new Error(`Google Gemini 服務目前忙碌或不穩定（狀態碼 ${lastStatus}）：${lastDetail}。這通常跟你的額度無關，等一下常會自動恢復，可以直接按「重試這一階段」，或改選其他供應商／模型。`);
       throw new Error(lastDetail);
