@@ -307,9 +307,33 @@
       const others = requestedModel.includes("pro") ? GEMINI免費模型 : GEMINI免費模型.filter(m=>m!==requestedModel);
       return [requestedModel,...others].filter((item,index,list)=>list.indexOf(item)===index);
     }
+    function 解析Gemini配額診斷(data){
+      // Google 的 429 回應裡，真正有用的資訊藏在 error.details（不是 error.message 那句話）：
+      // - google.rpc.QuotaFailure.violations[].quotaId 裡含 "PerMinute" 或 "PerDay"，決定這是短暫流量限制還是真的今天額度用完
+      // - google.rpc.RetryInfo.retryDelay（例如 "34s"）是 Google 自己建議的等待秒數
+      // 沒有解析這兩個欄位、只憑「收到 429 就一律說額度不足」，是上一版訊息不準確的根本原因。
+      try{
+        const details=data?.error?.details;
+        if(!Array.isArray(details))return null;
+        let quotaId="",retrySeconds=null;
+        for(const item of details){
+          const type=item?.["@type"]||"";
+          if(type.includes("QuotaFailure")){
+            const violation=(item.violations||[])[0];
+            if(violation?.quotaId)quotaId=violation.quotaId;
+          }
+          if(type.includes("RetryInfo")&&typeof item.retryDelay==="string"){
+            const match=item.retryDelay.match(/(\d+(?:\.\d+)?)s/);
+            if(match)retrySeconds=Math.ceil(parseFloat(match[1]));
+          }
+        }
+        if(!quotaId&&retrySeconds==null)return null;
+        return {quotaId,retrySeconds,period:quotaId.includes("PerDay")?"day":quotaId.includes("PerMinute")?"minute":"unknown"};
+      }catch(error){return null}
+    }
     async function 呼叫Gemini(apiKey,requestedModel,system,input,代理){
       const candidates=取得Gemini候選模型(requestedModel);
-      let lastStatus=0,lastDetail="";
+      let lastStatus=0,lastDetail="",lastDiagnosis=null,lastCandidate="";
       for(const candidate of candidates){
         for(let attempt=0;attempt<2;attempt++){
           const body={model:candidate,system_instruction:system,input,generation_config:{temperature:0.55}};
@@ -321,13 +345,27 @@
             if(!answer)throw new Error("Gemini 沒有傳回文字內容");
             return {answer,usedModel:candidate,usage:null};
           }
-          lastStatus=response.status;lastDetail=data?.error?.message||`Gemini API 錯誤 ${response.status}`;
+          lastStatus=response.status;lastCandidate=candidate;
+          lastDetail=data?.error?.message||`Gemini API 錯誤 ${response.status}`;
+          lastDiagnosis=response.status===429?解析Gemini配額診斷(data):null;
           if(!可重試狀態.has(response.status))break;
-          if(attempt===0)await 延遲(1300);
+          if(lastDiagnosis?.period==="day")break; // 每日額度用完，同一個模型再試也不會過，直接換下一個候選模型
+          if(attempt===0){
+            // 429 時原本固定等 1.3 秒再重試——對「每分鐘」流量限制來說幾乎等於沒等，幾乎一定再撞一次。
+            // 改成：有 Google 建議的秒數就照它等（最多等 20 秒，避免使用者等太久），沒有就至少等 8 秒。
+            const waitMs=response.status===429?Math.min((lastDiagnosis?.retrySeconds||8)*1000,20000):1300;
+            await 延遲(waitMs);
+          }
         }
         if(!可重試狀態.has(lastStatus))break;
       }
-      if(lastStatus===429)throw new Error("Gemini 免費額度目前不足（已經試過 3.8 Flash 與 3.5 Flash-Lite 兩個免費模型都一樣）。Google 的免費額度大多是「每分鐘」限制，通常等 1～2 分鐘再按重試就會恢復；如果隔了一段時間還是不行，可能是「每日」額度用完，要等隔天重置，或到 Google AI Studio 查看實際額度、改選 Gemini 3.1 Pro（可能需要付費額度）或其他供應商。");
+      if(lastStatus===429){
+        if(lastDiagnosis?.period==="day"){
+          throw new Error(`Gemini 免費額度用完的是「每日」上限（模型：${lastCandidate}），不是流量太快，現在重試不會有用，通常要等 Google 那邊隔天重置。這跟 Google AI Studio 用量儀表板看到的「總用量」是兩回事——免費層的每日請求數上限可能遠比儀表板數字給人的印象低，儀表板顯示用量很少不代表沒有打到上限。可以改選 Gemini 3.1 Pro（可能需要付費額度）或其他供應商，或等隔天再試。`);
+        }
+        const 等待說明=lastDiagnosis?.retrySeconds?`Google 這次回應建議等約 ${lastDiagnosis.retrySeconds} 秒`:`免費額度的請求限制多為「每分鐘」計算，通常等 1～2 分鐘`;
+        throw new Error(`Gemini 免費額度目前請求過於頻繁（已經試過 3.8 Flash 與 3.5 Flash-Lite 兩個免費模型都一樣，狀態碼 429）。${等待說明}再試就會恢復——這種情況下 Google AI Studio 的用量儀表板本來就會顯示很低，因為限制的是「短時間內的請求數」而不是總用量，兩者不衝突。如果隔了比較久（超過幾分鐘）還是不行，才可能是「每日」額度用完，要等隔天重置，或到 Google AI Studio 查看實際額度、改選 Gemini 3.1 Pro（可能需要付費額度）或其他供應商。`);
+      }
       if([500,502,503,504].includes(lastStatus))throw new Error(`Google Gemini 服務目前忙碌或不穩定（狀態碼 ${lastStatus}）：${lastDetail}。這通常跟你的額度無關，等一下常會自動恢復，可以直接按「重試這一階段」，或改選其他供應商／模型。`);
       throw new Error(lastDetail);
     }
